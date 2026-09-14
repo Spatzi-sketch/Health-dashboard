@@ -1,0 +1,541 @@
+:root {
+  /* Canvas + split-screen surfaces */
+  --canvas: #050506;
+  --luke-panel: #030304;
+  --luke-card: #0b0b0d;
+  --luke-card-hover: #101013;
+  --rowan-panel: #17181b;
+  --rowan-card: #1e1f23;
+  --rowan-card-hover: #24252a;
+
+  /* Hairlines — white at low alpha, never solid gray */
+  --border: rgb(255 255 255 / 0.08);
+  --border-strong: rgb(255 255 255 / 0.16);
+
+  /* Text hierarchy */
+  --text-primary: #f2f2f3;
+  --text-secondary: #a6a6ae;
+  --text-muted: #8e8e98;
+
+  /* ROWZY mint — sampled from the diamond mark */
+  --mint-pale: #cff5e4;
+  --mint-bright: #7fddb4;
+  --mint: #3fc492;
+  --mint-deep: #1c4a3c;
+  --mint-tint: rgb(63 196 146 / 0.12);
+
+  /* Status */
+  --positive: #5bd8a8;
+  --negative: #ff6b6b;
+  --negative-tint: rgb(255 107 107 / 0.1);
+  --neutral: #9a9aa3;
+
+  --radius-card: 14px;
+  --radius-control: 8px;
+  /* Self-hosted font families (see layout.tsx / @fontsource). */
+  --font-geist-sans: "Geist Sans";
+  --font-geist-mono: "Geist Mono";
+  --font-instrument-serif: "Instrument Serif";
+  --font-jetbrains-mono: "JetBrains Mono";
+  --font-inter: "Inter";
+  --font-sans: var(--font-geist-sans), -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", monospace;
+
+  /* Vitality visual language used by the WHOOP dashboard. */
+  --vitals-bg: #04060a;
+  --vitals-mint: #6ee7b7;
+  --vitals-mint-hover: #5dd6a6;
+  --vitals-mint-ink: #042a1c;
+  --vitals-azure: #6db4f5;
+  --vitals-amber: #f59e0b;
+  --vitals-text: #f2f6f4;
+  --vitals-text-dim: rgb(255 255 255 / 0.62);
+  --vitals-text-faint: rgb(255 255 255 / 0.36);
+  --vitals-line: rgb(167 243 208 / 0.16);
+  --vitals-line-soft: rgb(167 243 208 / 0.09);
+  --vitals-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --vitals-serif: var(--font-instrument-serif), "Iowan Old Style", Georgia, serif;
+  --vitals-mono: var(--font-jetbrains-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  --vitals-body: var(--font-inter), system-ui, sans-serif;
+
+  /* Assistant surfaces (Chat, Agents, source activity). Derived from the
+     dashboard palette above so JARVIS surfaces read as part of the original
+     page rather than a second design system. */
+  --assistant-surface: #04060a;
+  --assistant-surface-raised: rgb(13 20 18 / 0.92);
+  --assistant-surface-overlay: rgb(4 6 10 / 0.95);
+  --assistant-border: rgb(167 243 208 / 0.16);
+  --assistant-border-soft: rgb(167 243 208 / 0.09);
+  --assistant-accent: var(--vitals-mint);
+  --assistant-accent-dim: var(--mint-deep);
+  --assistant-text: var(--vitals-text);
+  --assistant-text-dim: var(--vitals-text-dim);
+  --assistant-text-faint: var(--vitals-text-faint);
+  --assistant-negative: var(--negative);
+  --assistant-radius: var(--radius-card);
+  --assistant-radius-control: var(--radius-control);
+  --assistant-ease: var(--vitals-ease);
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+/* Scrollbars belong to the instrument: hairline-quiet on the dark canvas,
+   never the browser's bright default bar. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--vitals-line) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background: var(--vitals-line);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--vitals-mint);
+}
+
+body {
+  background: var(--canvas);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Numerals never shimmy */
+.tnum,
+time {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Visible focus everywhere, mint ring offset for dark surfaces */
+:focus-visible {
+  outline: 2px solid var(--mint);
+  outline-offset: 2px;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+::selection {
+  background: var(--mint-deep);
+  color: var(--mint-pale);
+}
+
+/* Jarvis cinematic focus keeps the live dashboard mounted and moves the
+   existing evidence panels in-place. The overlay supplies only HUD chrome. */
+[data-rowzy-cinematic-panel] {
+  width: 100%;
+  transform-origin: 50% 50%;
+  transition:
+    width 920ms var(--vitals-ease),
+    opacity 620ms ease,
+    filter 720ms ease,
+    transform 920ms var(--vitals-ease),
+    box-shadow 720ms ease;
+}
+
+html[data-rowzy-cinematic="active"] [data-rowzy-dashboard-grid="true"] {
+  overflow: visible;
+  perspective: 1800px;
+  transform-style: preserve-3d;
+}
+
+html[data-rowzy-cinematic="active"] [data-rowzy-cinematic-panel] {
+  will-change: width, opacity, filter, transform;
+}
+
+html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]
+  [data-rowzy-dashboard-grid="true"],
+html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]
+  [data-rowzy-dashboard-grid="true"],
+html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]
+  [data-rowzy-dashboard-grid="true"] {
+  perspective: none;
+  transform-style: flat;
+}
+
+html[data-rowzy-cinematic="active"][data-rowzy-cinematic-exiting="false"]
+  [data-rowzy-cinematic-panel] {
+  opacity: 0.12;
+  filter: blur(8px) saturate(0.42) brightness(0.42);
+  transform: translate3d(0, 0, -180px) scale(0.97);
+}
+
+html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"]
+  [data-rowzy-cinematic-panel="social"] {
+  z-index: 8;
+  width: min(86vw, 1540px);
+  justify-self: center;
+  opacity: 1;
+  filter: saturate(1.16) brightness(1.04) drop-shadow(0 0 30px rgb(32 230 242 / 0.12));
+  transform: translate3d(0, 12px, 20px) scale(1.01);
+}
+
+html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="compare"][data-rowzy-cinematic-exiting="false"]
+  [data-rowzy-cinematic-panel^="whoop-"] {
+  z-index: 8;
+  width: min(43vw, 760px);
+  opacity: 1;
+  filter: saturate(1.08) brightness(1.04) drop-shadow(0 0 28px rgb(100 255 208 / 0.12));
+}
+
+html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="compare"][data-rowzy-cinematic-exiting="false"]
+  [data-rowzy-cinematic-panel="whoop-luke"] {
+  justify-self: start;
+  transform: translate3d(1.8vw, 10px, 28px) rotateY(1.4deg);
+}
+
+html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="compare"][data-rowzy-cinematic-exiting="false"]
+  [data-rowzy-cinematic-panel="whoop-rowan"] {
+  justify-self: end;
+  transform: translate3d(-1.8vw, 10px, 28px) rotateY(-1.4deg);
+}
+
+html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="cross"][data-rowzy-cinematic-exiting="false"]
+  [data-rowzy-cinematic-panel] {
+  z-index: 7;
+  opacity: 0.76;
+  filter: saturate(0.9) brightness(0.76);
+  transform: translate3d(0, 8px, 0) scale(0.97);
+}
+
+html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="cross"][data-rowzy-cinematic-exiting="false"]
+  [data-rowzy-cinematic-panel="social"] {
+  z-index: 8;
+  width: min(52vw, 940px);
+  justify-self: center;
+  opacity: 1;
+  filter: saturate(1.14) brightness(1.02) drop-shadow(0 0 26px rgb(228 92 255 / 0.1));
+  transform: translate3d(0, 8px, 24px);
+}
+
+html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="cross"][data-rowzy-cinematic-exiting="false"]
+  [data-rowzy-cinematic-panel="whoop-luke"] {
+  transform: translate3d(3vw, 8px, 5px) scale(0.97);
+}
+
+html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="cross"][data-rowzy-cinematic-exiting="false"]
+  [data-rowzy-cinematic-panel="whoop-rowan"] {
+  transform: translate3d(-3vw, 8px, 5px) scale(0.97);
+}
+
+html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="tired"][data-rowzy-cinematic-exiting="false"]
+  [data-rowzy-cinematic-panel] {
+  z-index: 4;
+  opacity: 0.06;
+  filter: blur(10px) saturate(0.35) brightness(0.32);
+  transform: translate3d(0, 10vh, -320px) scale(0.82);
+}
+
+html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="tired"][data-rowzy-cinematic-exiting="false"]
+  [data-rowzy-cinematic-panel="social"] {
+  width: min(48vw, 820px);
+  opacity: 0.025;
+  transform: translate3d(0, 32vh, -520px) scale(0.7) rotateX(9deg);
+}
+
+html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="tired"][data-rowzy-cinematic-subject="luke"][data-rowzy-cinematic-exiting="false"]
+  [data-rowzy-cinematic-panel="whoop-luke"],
+html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="tired"][data-rowzy-cinematic-subject="rowan"][data-rowzy-cinematic-exiting="false"]
+  [data-rowzy-cinematic-panel="whoop-rowan"] {
+  z-index: 6;
+  width: min(29vw, 500px);
+  justify-self: start;
+  opacity: 0.18;
+  filter: blur(2px) saturate(0.78) brightness(0.58) drop-shadow(0 0 22px rgb(103 255 211 / 0.09));
+  transform: translate3d(-7vw, 1vh, -80px) scale(0.86) rotateY(7deg);
+}
+
+html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="tired"][data-rowzy-cinematic-subject="luke"][data-rowzy-cinematic-exiting="false"]
+  [data-rowzy-cinematic-panel="whoop-rowan"],
+html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="tired"][data-rowzy-cinematic-subject="rowan"][data-rowzy-cinematic-exiting="false"]
+  [data-rowzy-cinematic-panel="whoop-luke"] {
+  width: min(25vw, 420px);
+  justify-self: end;
+  opacity: 0.045;
+  transform: translate3d(8vw, 6vh, -360px) scale(0.72) rotateY(-9deg);
+}
+
+html[data-rowzy-cinematic-stage="whoop.luke"]
+  [data-rowzy-cinematic-panel="whoop-rowan"],
+html[data-rowzy-cinematic-stage="whoop.rowan"]
+  [data-rowzy-cinematic-panel="whoop-luke"] {
+  opacity: 0.3 !important;
+  filter: blur(4px) saturate(0.45) brightness(0.48) !important;
+}
+
+html[data-rowzy-cinematic-stage="cross.health"]
+  [data-rowzy-cinematic-panel="social"] {
+  opacity: 0.28 !important;
+  filter: blur(5px) saturate(0.4) brightness(0.48) !important;
+}
+
+html[data-rowzy-cinematic-stage="cross.social"]
+  [data-rowzy-cinematic-panel^="whoop-"] {
+  opacity: 0.3 !important;
+  filter: blur(5px) saturate(0.4) brightness(0.48) !important;
+}
+
+html[data-rowzy-cinematic="active"] [data-platform] {
+  transition:
+    opacity 560ms ease,
+    filter 660ms ease,
+    transform 760ms var(--vitals-ease);
+}
+
+html[data-rowzy-cinematic-exiting="true"] [data-rowzy-cinematic-panel],
+html:not([data-rowzy-cinematic="active"]) [data-rowzy-cinematic-panel] {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+
+/* The JARVIS workspace is a reconfiguration of this dashboard, not a layer on
+   top of it. The grid stays mounted and re-proportions in place.
+
+   2026-08-19: the operator asked for instant navigation ("remove all
+   animations when going on a new page … I don't want wait times") and a
+   full-bleed page ("these borders on the edge need to go — fill the html
+   page completely"). The grid transition, every entrance/leave keyframe and
+   the retained edge strips were removed: opening a surface is one synchronous
+   reflow, and the open surface takes the whole grid, edge to edge. */
+
+/* Every panel keeps its named area, so the grid stays a single row and the
+   columns that yield simply collapse to zero. Dropping their areas instead
+   would auto-place them into implicit tracks and silently add a second row. */
+html[data-rowzy-workspace="active"] [data-rowzy-dashboard-grid="true"] {
+  grid-template-areas: "luke social rowan workspace";
+  grid-template-columns: 0 0 0 minmax(0, 1fr);
+  /* The workspace occupies the page, so the grid row fills the viewport. */
+  align-items: stretch;
+  min-height: calc(100dvh - 48px);
+}
+
+/* Content that yields to the workspace stops taking space immediately — a
+   closed column renders nothing visible, no peek sliver, no fade. */
+html[data-rowzy-workspace="active"] [data-rowzy-cinematic-panel="whoop-luke"],
+html[data-rowzy-workspace="active"] [data-rowzy-cinematic-panel="whoop-rowan"],
+html[data-rowzy-workspace="active"] [data-rowzy-cinematic-panel="social"] {
+  width: 0;
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Closed, the workspace takes no space at all: leaving it in the grid would
+   silently squeeze the real dashboard columns it is supposed to leave alone. */
+/* Specificity is deliberate: the region's own module class also sets a
+   display, and the closed state has to win over it. */
+html:not([data-rowzy-workspace="active"]) [data-rowzy-workspace-region] {
+  display: none;
+}
+
+[data-rowzy-workspace-region] {
+  grid-area: workspace;
+}
+
+/* The Systems map and the Progress Detail surfaces.
+ *
+ * Both reuse the workspace mechanism above rather than inventing a second one:
+ * they are regions of the same grid, the shared coordinator sets one attribute,
+ * and the dashboard re-proportions in place. Nothing is mounted over the page
+ * and nothing navigates away.
+ *
+ * Every template below names all of `luke`, `social`, `rowan` and the active
+ * surface, so the grid stays a single row and the columns that yield collapse
+ * to zero. Dropping an area instead would auto-place that panel into an
+ * implicit track and silently add a second row.
+ */
+[data-rowzy-surface-region="systems"] {
+  grid-area: systems;
+}
+
+[data-rowzy-surface-region="progress"] {
+  grid-area: progress;
+}
+
+[data-rowzy-surface-region="youtube"] {
+  grid-area: youtube;
+}
+
+[data-rowzy-surface-region="analytics"] {
+  grid-area: analytics;
+}
+
+/* Closed, a surface takes no grid space at all — leaving it in the flow would
+   quietly squeeze the dashboard columns it is supposed to leave alone. */
+html:not([data-rowzy-surface="systems"]) [data-rowzy-surface-region="systems"],
+html:not([data-rowzy-surface="progress"]) [data-rowzy-surface-region="progress"],
+html:not([data-rowzy-surface="youtube"]) [data-rowzy-surface-region="youtube"] {
+  display: none;
+}
+
+/* The analytics hub follows the same closed-state rule; its own block so the
+   pinned three-surface selector above stays byte-stable. */
+html:not([data-rowzy-surface="analytics"]) [data-rowzy-surface-region="analytics"] {
+  display: none;
+}
+
+/* Both people's Progress Detail stay mounted; only the selected person's
+   region is placed, so one frame can never open the other's view. */
+html[data-rowzy-surface="progress"][data-rowzy-progress-person="luke"]
+  [data-rowzy-surface-region="progress"][data-person="rowan"],
+html[data-rowzy-surface="progress"][data-rowzy-progress-person="rowan"]
+  [data-rowzy-surface-region="progress"][data-person="luke"] {
+  display: none;
+}
+
+/* Systems: the machinery takes the whole grid, edge to edge. 2026-08-19: the
+   retained 0.05fr edge strips were removed at the operator's request ("fill
+   the html page completely") — a closed column renders nothing visible. */
+html[data-rowzy-surface="systems"] [data-rowzy-dashboard-grid="true"] {
+  grid-template-areas: "luke systems social rowan";
+  grid-template-columns: 0 minmax(0, 1fr) 0 0;
+  align-items: stretch;
+  min-height: calc(100dvh - 48px);
+}
+
+/* Progress: the selected frame takes the whole grid the same way. */
+html[data-rowzy-surface="progress"] [data-rowzy-dashboard-grid="true"] {
+  grid-template-areas: "luke progress rowan social";
+  grid-template-columns: 0 minmax(0, 1fr) 0 0;
+  align-items: stretch;
+  min-height: calc(100dvh - 48px);
+}
+
+/* YouTube studio: the b-roll editor and per-video analytics expand into the
+   whole grid exactly the way Progress does. */
+html[data-rowzy-surface="youtube"] [data-rowzy-dashboard-grid="true"] {
+  grid-template-areas: "luke youtube rowan social";
+  grid-template-columns: 0 minmax(0, 1fr) 0 0;
+  align-items: stretch;
+  min-height: calc(100dvh - 48px);
+}
+
+/* Analytics hub: the real social hub expands into the whole grid exactly
+   the way the YouTube studio does. */
+html[data-rowzy-surface="analytics"] [data-rowzy-dashboard-grid="true"] {
+  grid-template-areas: "luke analytics rowan social";
+  grid-template-columns: 0 minmax(0, 1fr) 0 0;
+  align-items: stretch;
+  min-height: calc(100dvh - 48px);
+}
+
+/* Content that yields to an expanded surface stops taking space immediately.
+   2026-08-19: no fade, no staged width transition — instant, and complete:
+   every dashboard panel collapses, no retained edge, no peek sliver. */
+html[data-rowzy-surface="systems"] [data-rowzy-cinematic-panel="social"],
+html[data-rowzy-surface="systems"] [data-rowzy-cinematic-panel="whoop-luke"],
+html[data-rowzy-surface="systems"] [data-rowzy-cinematic-panel="whoop-rowan"],
+html[data-rowzy-surface="progress"] [data-rowzy-cinematic-panel="social"],
+html[data-rowzy-surface="progress"] [data-rowzy-cinematic-panel="whoop-luke"],
+html[data-rowzy-surface="progress"] [data-rowzy-cinematic-panel="whoop-rowan"],
+html[data-rowzy-surface="youtube"] [data-rowzy-cinematic-panel="social"],
+html[data-rowzy-surface="youtube"] [data-rowzy-cinematic-panel="whoop-luke"],
+html[data-rowzy-surface="youtube"] [data-rowzy-cinematic-panel="whoop-rowan"],
+html[data-rowzy-surface="analytics"] [data-rowzy-cinematic-panel="social"],
+html[data-rowzy-surface="analytics"] [data-rowzy-cinematic-panel="whoop-luke"],
+html[data-rowzy-surface="analytics"] [data-rowzy-cinematic-panel="whoop-rowan"] {
+  width: 0;
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 2026-08-19: the SYSTEMS/JARVIS edge entry tabs were removed at the
+   operator's request, and their [data-rowzy-surface-entry] rules with them.
+   The Mission Deck is the way into every surface. */
+
+/* Narrow viewports cannot spare an edge strip. The surface takes the whole
+   grid and the dashboard rows collapse — every area is still named, so the
+   grid never grows an implicit track. */
+@media (max-width: 860px) {
+  html[data-rowzy-surface="systems"] [data-rowzy-dashboard-grid="true"] {
+    grid-template-areas: "systems" "luke" "social" "rowan";
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) 0 0 0;
+  }
+
+  html[data-rowzy-surface="progress"] [data-rowzy-dashboard-grid="true"] {
+    grid-template-areas: "progress" "luke" "social" "rowan";
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) 0 0 0;
+  }
+
+  html[data-rowzy-surface="analytics"] [data-rowzy-dashboard-grid="true"] {
+    grid-template-areas: "analytics" "luke" "social" "rowan";
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) 0 0 0;
+  }
+
+  html[data-rowzy-surface="systems"] [data-rowzy-cinematic-panel],
+  html[data-rowzy-surface="progress"] [data-rowzy-cinematic-panel],
+  html[data-rowzy-surface="analytics"] [data-rowzy-cinematic-panel] {
+    width: 0;
+    min-width: 0;
+    height: 0;
+    padding: 0;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* MISSION DECK — the over-scroll navigation gesture (mission-deck-nav.tsx).
+   Containment keeps the browser's own edge behaviours (bounce navigation,
+   pull-to-refresh) from swallowing the deliberate push past the bottom that
+   charges the deck. Purely additive; every rule above is untouched. */
+html,
+body {
+  overscroll-behavior-y: contain;
+}

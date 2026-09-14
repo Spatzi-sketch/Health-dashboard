@@ -1,0 +1,448 @@
+/* Deck trigger ------------------------------------------------------------
+   2026-08-19: moved from the header brand cluster into the Mission Deck's
+   bottom toggle row at the operator's request, and restyled into the deck's
+   micro-label family — small and quiet, so it never competes with tiles. */
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border: 1px solid var(--vitals-line-soft);
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--vitals-text-dim);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font: 500 9px/1 var(--vitals-mono);
+  cursor: pointer;
+  transition:
+    color 200ms ease,
+    border-color 200ms ease;
+}
+
+.trigger:hover,
+.trigger:focus-visible {
+  color: var(--vitals-mint);
+  border-color: var(--vitals-mint);
+  outline: none;
+}
+
+.trigger:focus-visible {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--vitals-mint) 45%, transparent);
+}
+
+.triggerDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--vitals-mint);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--vitals-mint) 55%, transparent);
+}
+
+/* Header trigger ----------------------------------------------------------
+   2026-08-20: restored to the header brand cluster at the operator's
+   request (removed by dca1f80). Scoped under the header variant so the
+   deck's micro-label styling above stays untouched. */
+
+.trigger[data-variant="header"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--text-secondary);
+  letter-spacing: normal;
+  text-transform: none;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.trigger[data-variant="header"]:hover,
+.trigger[data-variant="header"]:focus-visible {
+  color: var(--text-primary);
+  border-color: rgb(255 255 255 / 0.28);
+  outline: none;
+}
+
+.trigger[data-variant="header"]:focus-visible {
+  box-shadow: 0 0 0 2px rgb(63 196 146 / 0.45);
+}
+
+.trigger[data-variant="header"] .triggerDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--mint);
+  box-shadow: 0 0 8px rgb(63 196 146 / 0.7);
+  animation: clapTriggerPulse 2.6s ease-in-out infinite;
+}
+
+@keyframes clapTriggerPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 6px rgb(63 196 146 / 0.5);
+  }
+  50% {
+    box-shadow: 0 0 12px rgb(63 196 146 / 0.9);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trigger[data-variant="header"] .triggerDot {
+    animation: none;
+  }
+}
+
+/* Screen-off overlay ------------------------------------------------------ */
+
+.screen {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  background: #000;
+  color: rgb(255 255 255 / 0.32);
+  cursor: none;
+  overflow: hidden;
+  font-family: var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.screen[data-phase="denied"] {
+  cursor: default;
+}
+
+.hint {
+  position: absolute;
+  right: 22px;
+  bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0;
+  font-size: 12px;
+  color: rgb(255 255 255 / 0.62);
+  opacity: 0;
+  transition: opacity 600ms ease;
+}
+
+.hint[data-visible="true"] {
+  opacity: 1;
+}
+
+.hint[data-state="denied"],
+.hint[data-state="unavailable"] {
+  color: rgb(255 140 140 / 0.9);
+}
+
+/* The way out that needs neither microphone nor keyboard. Always clickable
+   (even while the hint is faded, so a blind tap in the corner still works). */
+.exit {
+  padding: 8px 12px;
+  border: 1px solid rgb(255 255 255 / 0.28);
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: rgb(255 255 255 / 0.72);
+  font: inherit;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.exit:hover,
+.exit:focus-visible {
+  color: #fff;
+  border-color: rgb(255 255 255 / 0.5);
+  outline: none;
+}
+
+.screen:focus-visible {
+  outline: none;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Boot sequence ----------------------------------------------------------- */
+
+.screen[data-phase="booting"] {
+  background: transparent;
+  cursor: none;
+}
+
+.boot {
+  position: absolute;
+  inset: 0;
+}
+
+/* Black layer: opaque, torn by reveal bands, then it hands over to the iris
+   in the same frame (its handoff must not back-fill, or it would override
+   the tear mask during the delay). */
+.boot::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #000;
+  animation:
+    clapBootTears 720ms steps(1, end) 520ms 1 both,
+    clapBootHandoff 1ms linear 1420ms 1 forwards;
+}
+
+/* The iris: a growing transparent disc whose box-shadow paints the black
+   outside it, so the dashboard opens from the centre outward. */
+.iris {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 48px 300vmax #000;
+  opacity: 0;
+  animation: clapBootIris 900ms cubic-bezier(0.2, 0.7, 0.2, 1) 1420ms 1 forwards;
+}
+
+/* Chromatic ghosts of the tear bands: red above, cyan below. */
+.boot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    linear-gradient(to bottom, transparent 0 33.8%, rgb(255 60 80 / 0.28) 33.8% 34.2%, transparent 34.2% 100%),
+    linear-gradient(to bottom, transparent 0 36.4%, rgb(255 60 80 / 0.22) 36.4% 36.7%, transparent 36.7% 100%),
+    linear-gradient(to bottom, transparent 0 60.9%, rgb(60 220 255 / 0.26) 60.9% 61.3%, transparent 61.3% 100%),
+    linear-gradient(to bottom, transparent 0 62.3%, rgb(60 220 255 / 0.2) 62.3% 62.6%, transparent 62.6% 100%);
+  animation: clapBootGhosts 720ms steps(1, end) 520ms 1 both;
+}
+
+.scanline {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(90deg, transparent, #e8fff5 18%, #ffffff 50%, #e8fff5 82%, transparent);
+  box-shadow: 0 0 18px 4px rgb(127 221 180 / 0.55);
+  animation: clapBootScanline 620ms cubic-bezier(0.1, 0.9, 0.2, 1) 160ms 1 both;
+}
+
+.bloom {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40vmax;
+  height: 40vmax;
+  transform: translate(-50%, -50%) scale(0.2);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(207 245 228 / 0.45), rgb(63 196 146 / 0.22) 32%, transparent 68%);
+  opacity: 0;
+  animation: clapBootBloom 760ms cubic-bezier(0.2, 0.8, 0.2, 1) 1360ms 1 both;
+}
+
+.grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background-image:
+    linear-gradient(rgb(127 221 180 / 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(127 221 180 / 0.12) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(circle at center, #000 30%, transparent 78%);
+  animation: clapBootGrid 1600ms ease 420ms 1 both;
+}
+
+/* Thin horizontal reveal artefacts on top of the tears. */
+.tears {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.tears i {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgb(232 255 245 / 0.7);
+  opacity: 0;
+  animation: clapBootTearLine 720ms steps(1, end) 520ms 1 both;
+}
+
+.tears i:nth-child(1) { top: 34%; }
+.tears i:nth-child(2) { top: 36.5%; animation-delay: 560ms; }
+.tears i:nth-child(3) { top: 61%; animation-delay: 640ms; }
+.tears i:nth-child(4) { top: 62.4%; animation-delay: 700ms; }
+.tears i:nth-child(5) { top: 48.2%; animation-delay: 840ms; }
+
+.readout {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: var(--mint-pale);
+  opacity: 0;
+  animation:
+    clapBootReadoutIn 260ms steps(1, end) 760ms 1 both,
+    clapBootReadoutOut 260ms ease 2020ms 1 forwards;
+}
+
+.readoutTag {
+  font-size: 10px;
+  color: rgb(207 245 228 / 0.55);
+}
+
+.readoutTitle {
+  font-size: clamp(28px, 4.2vw, 52px);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  color: #f4fff9;
+  text-shadow:
+    0 0 14px rgb(127 221 180 / 0.55),
+    2px 0 0 rgb(255 60 80 / 0.35),
+    -2px 0 0 rgb(60 220 255 / 0.35);
+}
+
+.readoutLine {
+  font-size: 10px;
+  color: rgb(207 245 228 / 0.7);
+}
+
+.readoutLine b {
+  font-weight: 500;
+  color: var(--mint-bright);
+}
+
+/* Reduced motion: no sequence at all — the component unmounts the black
+   almost immediately (the global reduced-motion rule zeroes every animation
+   anyway), so nothing here needs to animate. */
+.screen[data-reduced-motion="true"] .boot::before,
+.screen[data-reduced-motion="true"] .boot::after,
+.screen[data-reduced-motion="true"] .iris,
+.screen[data-reduced-motion="true"] .scanline,
+.screen[data-reduced-motion="true"] .bloom,
+.screen[data-reduced-motion="true"] .grid,
+.screen[data-reduced-motion="true"] .tears,
+.screen[data-reduced-motion="true"] .readout {
+  animation: none;
+}
+
+.screen[data-reduced-motion="true"] .boot::before {
+  opacity: 1;
+}
+
+/* Keyframes --------------------------------------------------------------- */
+
+@keyframes clapBootScanline {
+  0% { width: 0; opacity: 0; box-shadow: 0 0 18px 4px rgb(127 221 180 / 0.55); }
+  12% { opacity: 1; }
+  60% { width: 100vw; opacity: 1; box-shadow: 0 0 18px 4px rgb(127 221 180 / 0.55); }
+  100% { width: 100vw; opacity: 0; box-shadow: 0 0 90px 40px rgb(127 221 180 / 0.18); }
+}
+
+/* Reveal bands cut through the black; each frame is a discrete jump. */
+@keyframes clapBootTears {
+  0% {
+    mask-image: linear-gradient(to bottom, #000 0 100%);
+  }
+  18% {
+    mask-image: linear-gradient(to bottom, #000 0 34%, transparent 34% 36.5%, #000 36.5% 100%);
+  }
+  30% {
+    mask-image: linear-gradient(to bottom, #000 0 100%);
+  }
+  42% {
+    mask-image: linear-gradient(to bottom, #000 0 34%, transparent 34% 36.5%, #000 36.5% 61%, transparent 61% 62.4%, #000 62.4% 100%);
+  }
+  55% {
+    mask-image: linear-gradient(to bottom, #000 0 20%, transparent 20% 21%, #000 21% 48%, transparent 48% 50%, #000 50% 100%);
+  }
+  66% {
+    mask-image: linear-gradient(to bottom, #000 0 100%);
+  }
+  80% {
+    mask-image: linear-gradient(to bottom, #000 0 34%, transparent 34% 36.5%, #000 36.5% 61%, transparent 61% 62.4%, #000 62.4% 100%);
+  }
+  100% {
+    mask-image: linear-gradient(to bottom, #000 0 100%);
+  }
+}
+
+@keyframes clapBootHandoff {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes clapBootIris {
+  0% { opacity: 1; width: 0; height: 0; }
+  100% { opacity: 1; width: 260vmax; height: 260vmax; }
+}
+
+@keyframes clapBootGhosts {
+  0% { opacity: 0; transform: translateX(0); }
+  18% { opacity: 1; transform: translateX(-6px); }
+  30% { opacity: 0; }
+  42% { opacity: 1; transform: translateX(7px); }
+  55% { opacity: 0.6; transform: translateX(-4px); }
+  66% { opacity: 0; }
+  80% { opacity: 1; transform: translateX(5px); }
+  100% { opacity: 0; transform: translateX(0); }
+}
+
+@keyframes clapBootTearLine {
+  0% { opacity: 0; }
+  18% { opacity: 1; }
+  30% { opacity: 0; }
+  42% { opacity: 1; }
+  66% { opacity: 0; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes clapBootBloom {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
+  35% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(2.6); }
+}
+
+@keyframes clapBootGrid {
+  0% { opacity: 0; }
+  40% { opacity: 0.55; }
+  100% { opacity: 0; }
+}
+
+@keyframes clapBootReadoutIn {
+  0% { opacity: 0; }
+  20% { opacity: 1; }
+  35% { opacity: 0.15; }
+  50% { opacity: 1; }
+  62% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+@keyframes clapBootReadoutOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}

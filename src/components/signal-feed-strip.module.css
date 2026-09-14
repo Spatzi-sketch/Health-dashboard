@@ -1,0 +1,169 @@
+/* Feed chips: the WHOOP-app "LIVE" look, in ROWZY's HUD material. One row,
+   never wraps awkwardly — chips compress by dropping the name first. */
+
+.strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 3px 8px 3px 5px;
+  border: 1px solid rgb(255 255 255 / 0.09);
+  border-radius: 999px;
+  background: rgb(4 10 9 / 0.78);
+  color: rgb(255 255 255 / 0.82);
+  font-family: var(--vitals-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+.chip svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+  opacity: 0.9;
+}
+
+.markFill {
+  fill: currentColor;
+}
+
+/* The play cut-out reads as the panel behind the chip. */
+.markCut {
+  fill: #04100e;
+}
+
+.markStroke {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+
+.markStrokeThin {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chipName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chipAge {
+  color: rgb(255 255 255 / 0.42);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+}
+
+.chipState {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 7.5px;
+  letter-spacing: 0.16em;
+}
+
+.chipState i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.chip[data-live="true"] .chipState {
+  background: rgb(73 255 180 / 0.12);
+  color: #49ffb4;
+}
+
+.chip[data-live="true"] .chipState i {
+  box-shadow: 0 0 6px rgb(73 255 180 / 0.8);
+  animation: feedPulse 2.4s ease-in-out infinite;
+}
+
+.chip[data-live="false"] .chipState {
+  background: rgb(255 176 97 / 0.12);
+  color: #ffb061;
+}
+
+/* Person segments inside one chip: initial + age + its own dot. */
+.chipPerson {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 7.5px;
+  letter-spacing: 0.12em;
+}
+
+.chipPerson i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.chipPerson b {
+  font-weight: 600;
+}
+
+.chipPerson span {
+  opacity: 0.75;
+  font-size: 7px;
+  letter-spacing: 0.06em;
+}
+
+.chipPerson[data-live="true"] {
+  background: rgb(73 255 180 / 0.12);
+  color: #49ffb4;
+}
+
+.chipPerson[data-live="true"] i {
+  box-shadow: 0 0 6px rgb(73 255 180 / 0.8);
+  animation: feedPulse 2.4s ease-in-out infinite;
+}
+
+.chipPerson[data-live="false"] {
+  background: rgb(255 176 97 / 0.12);
+  color: #ffb061;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chipPerson[data-live="true"] i {
+    animation: none;
+  }
+}
+
+/* Platform tint on the mark only; the chip stays neutral. */
+.chip[data-feed="youtube"] svg { color: #ff4d5a; }
+.chip[data-feed="instagram"] svg { color: #c46bff; }
+.chip[data-feed="tiktok"] svg { color: #4fd8e0; }
+.chip[data-feed="whoop"] svg { color: #72e8ba; }
+
+@keyframes feedPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chip[data-live="true"] .chipState i {
+    animation: none;
+  }
+}
+
+/* Tight rows: the name gives way first, then the age. */
+@container (max-width: 640px) {
+  .chipName { display: none; }
+}

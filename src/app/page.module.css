@@ -1,0 +1,514 @@
+.shell {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  overflow-x: clip;
+  overflow-y: visible;
+  background: var(--vitals-bg);
+}
+
+.topBar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--border);
+  background: rgb(4 6 8 / 0.92);
+  backdrop-filter: blur(18px);
+}
+
+.signOutButton,
+.secondaryButton {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  color: var(--text-secondary);
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.signOutButton {
+  min-height: 34px;
+  padding: 0 12px;
+}
+
+.signOutButton:hover,
+.secondaryButton:hover {
+  color: var(--text-primary);
+  border-color: rgb(255 255 255 / 0.28);
+}
+
+.accessArea {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: 48px 20px;
+  background: var(--luke-panel);
+}
+
+.accessCard {
+  width: min(100%, 440px);
+  padding: 32px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--luke-card);
+  text-align: center;
+}
+
+.accessEyebrow {
+  color: var(--mint-bright);
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+}
+
+.accessCard h2 {
+  margin-top: 10px;
+  font-size: 22px;
+}
+
+.accessCard p {
+  margin: 10px auto 24px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.secondaryButton {
+  min-height: 40px;
+  padding: 0 16px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* The local dev bridge: two quiet mono chips beside the brand. Development
+   builds only — the component renders nothing in production. */
+.brand [data-rowzy-dev-bridge] {
+  display: inline-flex;
+  gap: 6px;
+  margin-left: 10px;
+}
+
+.brand [data-rowzy-dev-bridge] button,
+.brand [data-rowzy-dev-bridge] a {
+  padding: 5px 8px;
+  border: 1px solid var(--vitals-line-soft);
+  border-radius: var(--radius-control);
+  color: var(--vitals-text-dim);
+  background: transparent;
+  font: 500 8px/1 var(--vitals-mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    color 200ms ease,
+    border-color 200ms ease;
+}
+
+.brand [data-rowzy-dev-bridge] button:hover,
+.brand [data-rowzy-dev-bridge] a:hover {
+  border-color: var(--vitals-mint);
+  color: var(--vitals-mint);
+}
+
+.brandName {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: var(--text-primary);
+}
+
+.syncNotice {
+  position: relative;
+  z-index: 18;
+  margin: 0;
+  padding: 9px 20px;
+  border-bottom: 1px solid rgb(91 216 168 / 0.18);
+  background: rgb(91 216 168 / 0.08);
+  color: var(--positive);
+  font-size: 12px;
+  text-align: center;
+}
+
+.syncNoticeError {
+  border-bottom-color: var(--negative-tint);
+  background: var(--negative-tint);
+  color: var(--negative);
+}
+
+.split {
+  position: relative;
+  z-index: 5;
+  flex: 1;
+  display: grid;
+  /* One person in the starter: the biometric rail and the social core share
+     the stage (production adds a second rail on the right). */
+  grid-template-areas: "luke social";
+  grid-template-columns:
+    minmax(350px, 0.96fr)
+    minmax(520px, 2.26fr);
+  align-items: start;
+  /* 2026-08-19: the 1920px cap and its centring margins were removed at the
+     operator's request ("these borders on the edge need to go — fill the
+     html page completely"): the grid stretches to the viewport edges. */
+  width: 100%;
+}
+
+.panel {
+  /* 2026-08-19: the boot-in entry/bounce/nudge offsets left with
+     panelBootIn; only the ambient glitch/sweep clocks remain. */
+  --panel-glitch-x: 7px;
+  --panel-glitch-back-x: -4px;
+  --panel-glitch-ease-x: 3px;
+  --panel-glitch-cycle: 16.8s;
+  --panel-glitch-delay: 4.7s;
+  --panel-sweep-cycle: 18.4s;
+  --panel-sweep-delay: 7.9s;
+
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+  padding: 0;
+  /* 2026-08-19: the 1.12s panelBootIn entrance was removed at the operator's
+     request ("make sure it loads very fast, I don't want wait times") — the
+     rails render at full presence immediately. The ambient signal-glitch and
+     diagnostic-sweep stay: they cost no wait. */
+}
+
+.panel::before,
+.panel::after {
+  position: absolute;
+  z-index: 9;
+  content: "";
+  pointer-events: none;
+}
+
+/* A short, infrequent signal break keeps the biometric rails feeling alive
+   without moving their content or competing with the daily readout. */
+.panel::before {
+  inset: 0;
+  opacity: 0;
+  background:
+    linear-gradient(90deg, transparent 0 8%, rgb(173 255 226 / 0.1) 8.2% 9%, transparent 9.3% 100%),
+    repeating-linear-gradient(to bottom, transparent 0 3px, rgb(213 255 239 / 0.05) 4px 5px);
+  mix-blend-mode: screen;
+  animation: panelSignalGlitch var(--panel-glitch-cycle) var(--panel-glitch-delay) steps(1, end) infinite;
+}
+
+.panel::after {
+  top: -12%;
+  right: 0;
+  left: 0;
+  height: 9%;
+  opacity: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgb(119 255 205 / 0.025) 35%,
+    rgb(209 255 238 / 0.22) 50%,
+    rgb(119 255 205 / 0.025) 65%,
+    transparent
+  );
+  box-shadow: 0 0 18px rgb(103 246 194 / 0.035);
+  animation: panelDiagnosticSweep var(--panel-sweep-cycle) var(--panel-sweep-delay) linear infinite;
+}
+
+.panel[data-person="luke"] {
+  grid-area: luke;
+  background: transparent;
+}
+
+.panel[data-person="rowan"] {
+  --panel-glitch-x: -7px;
+  --panel-glitch-back-x: 4px;
+  --panel-glitch-ease-x: -3px;
+  --panel-glitch-cycle: 19.6s;
+  --panel-glitch-delay: 8.3s;
+  --panel-sweep-cycle: 21.1s;
+  --panel-sweep-delay: 11.6s;
+
+  grid-area: rowan;
+  background: transparent;
+  border-left: 0;
+}
+
+.backdrop {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--vitals-bg);
+}
+
+.atmosphere {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(
+      60% 50% at 50% 30%,
+      color-mix(in srgb, var(--vitals-mint) 16%, transparent) 0%,
+      color-mix(in srgb, var(--vitals-mint) 6%, transparent) 32%,
+      transparent 65%
+    ),
+    radial-gradient(28% 22% at 50% 38%, rgb(255 226 181 / 0.07) 0%, transparent 70%),
+    radial-gradient(120% 80% at 50% 100%, rgb(14 38 30 / 0.5) 0%, rgb(4 6 10 / 0.95) 75%);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  opacity: 0.42;
+}
+
+.mountains {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 30vh;
+  min-height: 180px;
+  opacity: 0.28;
+}
+
+.particles {
+  position: absolute;
+  inset: 0;
+}
+
+.particles span {
+  position: absolute;
+  border-radius: 50%;
+  background: rgb(233 239 233 / 0.7);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--vitals-mint) 55%, transparent);
+  animation-name: particleDrift;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@keyframes particleDrift {
+  0% { transform: translate3d(0, 0, 0); opacity: 0; }
+  10% { opacity: 0.7; }
+  90% { opacity: 0.55; }
+  100% { transform: translate3d(var(--dx, 12px), var(--dy, -100vh), 0); opacity: 0; }
+}
+
+/* 2026-08-19: @keyframes panelBootIn removed with the entrance above. */
+
+@keyframes panelSignalGlitch {
+  0%,
+  72%,
+  72.9%,
+  100% {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+    transform: translateX(0);
+  }
+  72.1% {
+    opacity: 0.26;
+    clip-path: inset(17% 0 79% 0);
+    transform: translateX(var(--panel-glitch-x));
+  }
+  72.3% {
+    opacity: 0.12;
+    clip-path: inset(53% 0 42% 0);
+    transform: translateX(var(--panel-glitch-back-x));
+  }
+  72.5% {
+    opacity: 0.2;
+    clip-path: inset(81% 0 15% 0);
+    transform: translateX(var(--panel-glitch-ease-x));
+  }
+  72.7% {
+    opacity: 0.08;
+    clip-path: inset(34% 0 64% 0);
+    transform: translateX(0);
+  }
+}
+
+@keyframes panelDiagnosticSweep {
+  0%,
+  76% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  77% {
+    opacity: 0.2;
+  }
+  84% {
+    opacity: 0.09;
+  }
+  86%,
+  100% {
+    opacity: 0;
+    transform: translateY(1250%);
+  }
+}
+
+.switcher {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 24px;
+  padding: 12px 28px;
+  border-top: 1px solid var(--border);
+  background: var(--canvas);
+  font-size: 12px;
+}
+
+.switcherHint {
+  color: var(--text-muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.switcherGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.switcherLabel {
+  color: var(--text-secondary);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.switcherLink {
+  color: var(--text-muted);
+  padding: 3px 8px;
+  border-radius: 6px;
+  transition: color 0.15s ease;
+}
+
+.switcherLink:hover {
+  color: var(--text-secondary);
+}
+
+.switcherLinkActive {
+  color: var(--mint-bright);
+  background: var(--mint-tint);
+}
+
+@media (max-width: 1380px) {
+  .split {
+    grid-template-columns:
+      minmax(330px, 0.95fr)
+      minmax(500px, 2.25fr);
+  }
+}
+
+@media (min-width: 1221px) {
+  .panel {
+    position: sticky;
+    top: 48px;
+    align-self: start;
+  }
+}
+
+@media (max-width: 1220px) {
+  .split {
+    grid-template-areas:
+      "luke"
+      "social";
+    grid-template-columns: 1fr;
+  }
+}
+
+/* A real control-room viewport: all three signal modules and both biometric
+   rails share the space below the app bar. Short or narrow screens retain the
+   normal document flow, so compact laptops and phones can still scroll. */
+@media (min-width: 1221px) and (min-height: 680px) {
+  .shell {
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .topBar {
+    position: relative;
+    flex: 0 0 48px;
+  }
+
+  .split {
+    flex: 1 1 0;
+    min-height: 0;
+    align-items: stretch;
+    overflow: hidden;
+  }
+
+  /* Each rail keeps its own height and scrolls inside it: a rail taller
+     than the viewport must never be cut off with no way to reach the rest.
+     Scrollbars stay hidden so the control-room frame reads as one surface. */
+  .panel {
+    position: relative;
+    top: auto;
+    align-self: stretch;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+  }
+
+  .panel::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .split {
+    grid-template-areas:
+      "luke"
+      "social";
+    grid-template-columns: 1fr;
+  }
+
+  .panel {
+    padding: 0;
+  }
+
+  .topBar,
+  .switcher {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .shell { background: var(--vitals-bg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel,
+  .panel::before,
+  .panel::after,
+  .particles span {
+    animation: none;
+  }
+
+  .panel::before,
+  .panel::after {
+    display: none;
+  }
+}
