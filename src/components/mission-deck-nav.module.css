@@ -1,0 +1,580 @@
+/*
+ * MISSION DECK — the real dashboard's Mission-Control navigation.
+ *
+ * Ported from the design-lab concept (src/app/design-lab/mission-deck.module.css)
+ * with the lab's --lab-speed / --lab-glow control multipliers resolved to
+ * their 1× values. Foundation tokens only — no local palette; the analytics
+ * mini-render's platform accents arrive from the component as --accent.
+ *
+ * Layering: the deck (110) sits above every surface and the leaving overlay
+ * (40 in globals.css) and below the assistant's answer card (120) and the
+ * assistant dock and pills (132–155).
+ *
+ * 2026-08-19: the DECK edge tab's rules (.deckTab family) were removed with
+ * the SYSTEMS/JARVIS edge tabs at the operator's request — the tab itself had
+ * already left the component.
+ */
+
+/* -- over-scroll charge: fills as intent accumulates toward the threshold --- */
+
+.chargeRail {
+  position: fixed;
+  left: 50%;
+  bottom: 36px;
+  transform: translateX(-50%);
+  width: min(420px, 72vw);
+  z-index: 110;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.chargeTrack {
+  flex: 1;
+  height: 2px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--vitals-mint) 12%, transparent);
+}
+
+.chargeTrack i {
+  display: block;
+  height: 100%;
+  background: var(--vitals-mint);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--vitals-mint) 60%, transparent);
+  transition: width 90ms linear;
+}
+
+.chargeRail b {
+  font: 600 8px/1 var(--vitals-mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--vitals-mint);
+}
+
+/* -- the deck ---------------------------------------------------------------- */
+
+.deck {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 28px 24px;
+  opacity: 1;
+  transition: opacity 360ms ease;
+}
+
+.deck[data-phase="opening"] {
+  animation: deckIn 400ms var(--vitals-ease) both;
+}
+
+.deck[data-phase="closing"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes deckIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Dim + slight blur over the live page — the OS treatment. The real dashboard
+   stays underneath, which is this port's stand-in for the lab's viewport
+   shrink: the page you left remains visible behind the glass. */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  appearance: none;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  cursor: default;
+  background: color-mix(in srgb, var(--vitals-bg) 55%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.deckTitle {
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+  font: 600 10px/1 var(--vitals-mono);
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--vitals-mint);
+}
+
+.deckHint {
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+  font: 500 8px/1.5 var(--vitals-mono);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--vitals-text-faint);
+}
+
+/* -- bottom toggle row: quiet mode switches under the tile grid -------------
+   2026-08-19: the operator asked for Clap mode on the Mission Deck at the
+   bottom. Micro-label family, hairline seam, room for future toggles;
+   deliberately smaller and dimmer than the tiles. */
+.toggleRow {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: min(100%, 760px);
+  padding-top: 10px;
+  border-top: 1px solid var(--vitals-line-soft);
+}
+
+.toggleLabel {
+  font: 500 8px/1 var(--vitals-mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--vitals-text-faint);
+}
+
+/* The FLIP zoom, carried by the grid: tiles settle from a slight over-scale
+   on the lab's 400ms var(--vitals-ease) clock, and rise back out on close. */
+.tileGrid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px 20px;
+  width: min(100%, 760px);
+  transition: transform 400ms var(--vitals-ease);
+}
+
+.deck[data-phase="opening"] .tileGrid {
+  animation: deckTilesIn 400ms var(--vitals-ease) both;
+}
+
+.deck[data-phase="closing"] .tileGrid {
+  transform: scale(1.045);
+}
+
+@keyframes deckTilesIn {
+  from {
+    transform: scale(1.045);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 700px) {
+  .tileGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* -- tiles ------------------------------------------------------------------- */
+
+.tile {
+  appearance: none;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.tile:focus-visible {
+  outline: none;
+}
+
+.tileFrame {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border: 1px solid var(--vitals-line-soft);
+  border-radius: 6px;
+  background:
+    linear-gradient(
+      color-mix(in srgb, var(--vitals-mint) 2%, transparent) 1px,
+      transparent 1px
+    ) 0 0 / 100% 14px,
+    color-mix(in srgb, var(--vitals-text) 2%, var(--vitals-bg));
+  transition:
+    transform 200ms var(--vitals-ease),
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.tile:hover .tileFrame {
+  transform: translateY(-2px) scale(1.02);
+  border-color: color-mix(in srgb, var(--vitals-mint) 45%, transparent);
+}
+
+.tile:focus-visible .tileFrame {
+  border-color: var(--vitals-mint);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--vitals-mint) 55%, transparent);
+}
+
+/* The current surface, ring-highlighted in mint. */
+.tile[data-current="true"] .tileFrame {
+  border-color: var(--vitals-mint);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--vitals-mint) 55%, transparent),
+    0 0 16px color-mix(in srgb, var(--vitals-mint) 22%, transparent);
+}
+
+/* Micro-label title under each tile — the macOS screenshot idiom. */
+.tileTitle {
+  align-self: center;
+  font: 500 8px/1 var(--vitals-mono);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--vitals-text-dim);
+}
+
+.tile[data-current="true"] .tileTitle {
+  color: var(--vitals-mint);
+}
+
+/* -- mini-renders: abstract panel skeletons, one flavor per tile ------------- */
+
+.artDashboard {
+  position: absolute;
+  inset: 12% 10%;
+  display: grid;
+  grid-template-columns: 1fr 1.35fr 1fr;
+  gap: 8%;
+}
+
+.artColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 9%;
+  min-width: 0;
+}
+
+.artDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--vitals-mint);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--vitals-mint) 55%, transparent);
+}
+
+.artBar {
+  display: block;
+  height: 3px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--vitals-text) 16%, transparent);
+}
+
+/* Systems: the mint schematic. */
+.artSystems {
+  position: absolute;
+  inset: 8%;
+  width: 84%;
+  height: 84%;
+}
+
+.schemEdge {
+  stroke: color-mix(in srgb, var(--vitals-mint) 30%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.schemNode {
+  fill: var(--vitals-mint);
+  filter: drop-shadow(
+    0 0 3px color-mix(in srgb, var(--vitals-mint) 70%, transparent)
+  );
+}
+
+/* JARVIS & agents: chat + library split. */
+.artJarvis {
+  position: absolute;
+  inset: 12% 10%;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 8%;
+}
+
+.artChatPane {
+  display: flex;
+  flex-direction: column;
+  gap: 9%;
+  padding-right: 8%;
+  border-right: 1px solid var(--vitals-line-soft);
+  min-width: 0;
+}
+
+.artChatLine {
+  display: block;
+  height: 8%;
+  min-height: 4px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--vitals-text) 14%, transparent);
+}
+
+.artChatLine[data-side="user"] {
+  align-self: flex-end;
+  background: color-mix(in srgb, var(--vitals-mint) 30%, transparent);
+}
+
+.artLibraryPane {
+  display: flex;
+  flex-direction: column;
+  gap: 11%;
+  min-width: 0;
+}
+
+.artLibraryRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.artLibraryRow i {
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--vitals-mint) 60%, transparent);
+  flex: none;
+}
+
+.artLibraryRow b {
+  display: block;
+  height: 3px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--vitals-text) 16%, transparent);
+}
+
+/* Analytics: three platform-colored columns; --accent set by the component. */
+.artAnalytics {
+  position: absolute;
+  inset: 12% 10%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8%;
+}
+
+.artPlatformCol {
+  display: flex;
+  flex-direction: column;
+  gap: 8%;
+  min-width: 0;
+}
+
+.artAccentDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--accent, var(--vitals-mint));
+  box-shadow: 0 0 6px
+    color-mix(in srgb, var(--accent, var(--vitals-mint)) 55%, transparent);
+}
+
+.artBarRow {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: 12%;
+  min-height: 0;
+}
+
+.artBarRow b {
+  flex: 1;
+  border-radius: 1px;
+  background: color-mix(in srgb, var(--accent, var(--vitals-mint)) 45%, transparent);
+}
+
+/* B-roll studio: clip shelf + timeline, amber REC accent. */
+.artBroll {
+  position: absolute;
+  inset: 12% 10%;
+  display: flex;
+  flex-direction: column;
+  gap: 10%;
+}
+
+.brollShelf {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6%;
+}
+
+.brollClip {
+  position: relative;
+  border: 1px solid var(--vitals-line-soft);
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--vitals-text) 5%, transparent);
+}
+
+.brollClip[data-live="true"] {
+  border-color: color-mix(in srgb, var(--vitals-amber) 55%, transparent);
+}
+
+.brollClip[data-live="true"]::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--vitals-amber);
+  box-shadow: 0 0 5px color-mix(in srgb, var(--vitals-amber) 65%, transparent);
+}
+
+.brollTimeline {
+  position: relative;
+  height: 16%;
+  min-height: 9px;
+  border: 1px solid var(--vitals-line-soft);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.brollTimeline b {
+  position: absolute;
+  top: 22%;
+  bottom: 22%;
+  border-radius: 1px;
+  background: color-mix(in srgb, var(--vitals-text) 18%, transparent);
+}
+
+.brollPlayhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--vitals-mint);
+  box-shadow: 0 0 5px color-mix(in srgb, var(--vitals-mint) 70%, transparent);
+}
+
+/* Design lab (development only): token swatches + type ladder. */
+.artLab {
+  position: absolute;
+  inset: 12% 10%;
+  display: flex;
+  flex-direction: column;
+  gap: 12%;
+}
+
+.labSwatches {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: 6%;
+}
+
+.labSwatches i {
+  flex: 1;
+  border-radius: 3px;
+  border: 1px solid var(--vitals-line-soft);
+}
+
+.labSwatches i[data-step="0"] {
+  background: color-mix(in srgb, var(--vitals-mint) 45%, transparent);
+}
+
+.labSwatches i[data-step="1"] {
+  background: color-mix(in srgb, var(--vitals-mint) 26%, transparent);
+}
+
+.labSwatches i[data-step="2"] {
+  background: color-mix(in srgb, var(--vitals-mint) 12%, transparent);
+}
+
+.labSwatches i[data-step="3"] {
+  background: color-mix(in srgb, var(--vitals-text) 8%, transparent);
+}
+
+.labLadder {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.labLadder b {
+  display: block;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--vitals-text) 20%, transparent);
+}
+
+.labLadder b[data-step="0"] {
+  height: 6px;
+  width: 70%;
+}
+
+.labLadder b[data-step="1"] {
+  height: 4px;
+  width: 52%;
+}
+
+.labLadder b[data-step="2"] {
+  height: 3px;
+  width: 38%;
+}
+
+/* -- reduced motion: every swap is instant ---------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .deck,
+  .deck[data-phase="opening"],
+  .deck[data-phase="opening"] .tileGrid,
+  .tileGrid,
+  .tileFrame,
+  .chargeTrack i {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* -- WHOOP tile art: recovery ring + metric rows ----------------------------- */
+
+.artWhoop {
+  position: absolute;
+  inset: 14% 12%;
+  display: flex;
+  align-items: center;
+  gap: 12%;
+}
+
+.artRing {
+  flex: 0 0 auto;
+  width: 34%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--vitals-mint) 55%, transparent);
+  border-top-color: color-mix(in srgb, var(--vitals-mint) 18%, transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--vitals-mint) 20%, transparent);
+}
+
+/* The deck's WHOOP tile pulses the real dashboard panels once on arrival.
+   :global because the panels live outside this component; the attribute is
+   set and removed by focusDashboardPanel. Transition, not keyframes, so the
+   fade-out rides the attribute removal. */
+:global([data-rowzy-cinematic-panel][data-rowzy-deck-focus="true"]) {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--vitals-mint) 65%, transparent),
+    0 0 26px color-mix(in srgb, var(--vitals-mint) 25%, transparent);
+  transition: box-shadow 300ms ease;
+}

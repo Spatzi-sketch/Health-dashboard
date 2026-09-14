@@ -1,0 +1,19 @@
+{
+  "source": "zepp-gdpr-export",
+  "days": [
+    { "date": "2026-09-01", "steps": 8124, "distanceMeters": 6100, "calories": 391, "heartRate": 76, "restingHeartRate": 60, "sleepMinutes": 421, "deepSleepMinutes": 84, "remSleepMinutes": 92, "pai": 47, "spo2": 97.2, "stress": 41 },
+    { "date": "2026-09-02", "steps": 10482, "distanceMeters": 7860, "calories": 512, "heartRate": 79, "restingHeartRate": 58, "sleepMinutes": 452, "deepSleepMinutes": 96, "remSleepMinutes": 104, "pai": 58, "spo2": 97.4, "stress": 36 },
+    { "date": "2026-09-03", "steps": 9130, "distanceMeters": 6850, "calories": 441, "heartRate": 74, "restingHeartRate": 59, "sleepMinutes": 438, "deepSleepMinutes": 90, "remSleepMinutes": 99, "pai": 52, "spo2": 97.1, "stress": 38 },
+    { "date": "2026-09-04", "steps": 12456, "distanceMeters": 9340, "calories": 601, "heartRate": 82, "restingHeartRate": 57, "sleepMinutes": 467, "deepSleepMinutes": 102, "remSleepMinutes": 110, "pai": 66, "spo2": 97.6, "stress": 33 },
+    { "date": "2026-09-05", "steps": 13108, "distanceMeters": 9830, "calories": 634, "heartRate": 83, "restingHeartRate": 56, "sleepMinutes": 471, "deepSleepMinutes": 104, "remSleepMinutes": 112, "pai": 71, "spo2": 97.5, "stress": 31 },
+    { "date": "2026-09-06", "steps": 7632, "distanceMeters": 5720, "calories": 368, "heartRate": 72, "restingHeartRate": 60, "sleepMinutes": 485, "deepSleepMinutes": 108, "remSleepMinutes": 118, "pai": 44, "spo2": 97.3, "stress": 29 },
+    { "date": "2026-09-07", "steps": 9901, "distanceMeters": 7430, "calories": 477, "heartRate": 77, "restingHeartRate": 59, "sleepMinutes": 444, "deepSleepMinutes": 92, "remSleepMinutes": 101, "pai": 55, "spo2": 97.2, "stress": 37 },
+    { "date": "2026-09-08", "steps": 11420, "distanceMeters": 8560, "calories": 552, "heartRate": 80, "restingHeartRate": 58, "sleepMinutes": 459, "deepSleepMinutes": 98, "remSleepMinutes": 106, "pai": 62, "spo2": 97.4, "stress": 34 },
+    { "date": "2026-09-09", "steps": 10876, "distanceMeters": 8160, "calories": 524, "heartRate": 78, "restingHeartRate": 58, "sleepMinutes": 450, "deepSleepMinutes": 95, "remSleepMinutes": 103, "pai": 60, "spo2": 97.3, "stress": 35 },
+    { "date": "2026-09-10", "steps": 13742, "distanceMeters": 10310, "calories": 663, "heartRate": 84, "restingHeartRate": 56, "sleepMinutes": 476, "deepSleepMinutes": 106, "remSleepMinutes": 114, "pai": 74, "spo2": 97.6, "stress": 30 },
+    { "date": "2026-09-11", "steps": 11934, "distanceMeters": 8950, "calories": 576, "heartRate": 81, "restingHeartRate": 57, "sleepMinutes": 462, "deepSleepMinutes": 100, "remSleepMinutes": 108, "pai": 64, "spo2": 97.5, "stress": 32 },
+    { "date": "2026-09-12", "steps": 15210, "distanceMeters": 11410, "calories": 734, "heartRate": 86, "restingHeartRate": 55, "sleepMinutes": 480, "deepSleepMinutes": 110, "remSleepMinutes": 116, "pai": 79, "spo2": 97.7, "stress": 28 },
+    { "date": "2026-09-13", "steps": 8826, "distanceMeters": 6620, "calories": 425, "heartRate": 75, "restingHeartRate": 59, "sleepMinutes": 455, "deepSleepMinutes": 97, "remSleepMinutes": 105, "pai": 51, "spo2": 97.2, "stress": 39 },
+    { "date": "2026-09-14", "steps": 10364, "distanceMeters": 7770, "calories": 501, "heartRate": 78, "restingHeartRate": 58, "sleepMinutes": 447, "deepSleepMinutes": 94, "remSleepMinutes": 102, "pai": 57, "spo2": 97.4, "stress": 36 }
+  ]
+}

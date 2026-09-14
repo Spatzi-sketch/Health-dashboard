@@ -1,0 +1,2209 @@
+.core {
+  position: relative;
+  z-index: 6;
+  grid-area: social;
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  min-width: 0;
+  padding: 36px 10px 46px;
+  color: var(--vitals-text);
+  perspective: 1500px;
+  transform-style: preserve-3d;
+}
+
+.coreHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 18px;
+  padding: 0 8px;
+  color: rgb(255 255 255 / 0.27);
+  font-family: var(--vitals-mono);
+  font-size: 6px;
+  letter-spacing: 0.22em;
+}
+
+.coreHeader i {
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, transparent, rgb(167 243 208 / 0.14), transparent);
+}
+
+.progressStage {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  padding: 12px 7px 19px;
+  perspective: 1600px;
+  transform-style: preserve-3d;
+}
+
+.progressStage::before {
+  position: absolute;
+  z-index: -2;
+  inset: -8% -4% -12%;
+  content: "";
+  opacity: 0.32;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgb(112 255 215 / 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(112 255 215 / 0.035) 1px, transparent 1px),
+    radial-gradient(60% 72% at 50% 46%, rgb(83 255 201 / 0.11), transparent 72%);
+  background-size: 26px 26px, 26px 26px, 100% 100%;
+  mask-image: radial-gradient(ellipse at center, black 18%, transparent 76%);
+  transform: rotateX(62deg) translate3d(0, 19%, -90px);
+  transform-origin: 50% 60%;
+}
+
+.progressStage::after {
+  position: absolute;
+  z-index: -1;
+  right: 10%;
+  bottom: 0;
+  left: 10%;
+  height: 34%;
+  content: "";
+  border-radius: 50%;
+  opacity: 0.56;
+  background: radial-gradient(ellipse, rgb(80 255 204 / 0.12), transparent 68%);
+  filter: blur(22px);
+  pointer-events: none;
+  animation: stagePulse 6s ease-in-out 2.2s infinite alternate;
+}
+
+.progressStageInner {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  /* One person in the starter: a single frame, centered, at the same width
+     each frame had in the two-up production layout. */
+  grid-template-columns: minmax(0, calc(50% - clamp(4px, 0.55vw, 7.5px)));
+  justify-content: center;
+  gap: clamp(8px, 1.1vw, 15px);
+  min-width: 0;
+  transform-style: preserve-3d;
+}
+
+/* The frame is a button so it can be reached by keyboard and announces what it
+   opens. Every visual property below is unchanged from when it was an
+   `article`; only the browser's default button chrome is reset. */
+.progressFrame {
+  position: relative;
+  display: block;
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  cursor: pointer;
+  border: 1px solid rgb(137 255 218 / 0.2);
+  border-radius: clamp(12px, 1.15vw, 18px);
+  opacity: 0;
+  background:
+    linear-gradient(180deg, rgb(11 20 19 / 0.94), rgb(3 8 8 / 0.98)),
+    rgb(3 7 8 / 0.95);
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.02) inset,
+    0 22px 48px rgb(0 0 0 / 0.44),
+    0 0 38px rgb(67 255 196 / 0.045);
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  will-change: transform, opacity, filter;
+}
+
+.progressFrame[data-person="luke"] {
+  animation: dockFromLuke 1.42s cubic-bezier(0.16, 1, 0.3, 1) 0.22s both;
+}
+
+.progressFrame[data-person="rowan"] {
+  animation: dockFromRowan 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.56s both;
+}
+
+.progressFrame:hover,
+.progressFrame:focus-visible {
+  border-color: rgb(137 255 218 / 0.5);
+}
+
+.photoViewport {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: rgb(3 8 8);
+  transform: translateZ(0);
+  animation: photoHover 7s ease-in-out 2.25s infinite alternate;
+}
+
+.progressImage {
+  object-fit: cover;
+  object-position: 50% 39%;
+  filter: saturate(0.87) contrast(1.06) brightness(0.84);
+  transform: scale(1.035);
+}
+
+.progressFrame[data-person="rowan"] .progressImage {
+  object-position: 50% 38%;
+}
+
+.photoViewport::before,
+.photoViewport::after {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+}
+
+.photoViewport::before {
+  background:
+    linear-gradient(180deg, rgb(3 8 9 / 0.04) 35%, rgb(2 8 8 / 0.72) 100%),
+    linear-gradient(90deg, rgb(23 255 185 / 0.13), transparent 26%, transparent 74%, rgb(48 138 255 / 0.11));
+  mix-blend-mode: screen;
+}
+
+.photoViewport::after {
+  opacity: 0.24;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0,
+    transparent 3px,
+    rgb(255 255 255 / 0.045) 4px
+  );
+  mix-blend-mode: screen;
+}
+
+.photoDepthGlow {
+  position: absolute;
+  z-index: 3;
+  right: 12%;
+  bottom: -34%;
+  left: 12%;
+  height: 58%;
+  border-radius: 50%;
+  opacity: 0.42;
+  background: rgb(72 255 196 / 0.22);
+  filter: blur(24px);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.photoScan {
+  position: absolute;
+  z-index: 4;
+  top: -34%;
+  bottom: -34%;
+  left: -28%;
+  width: 12%;
+  opacity: 0.72;
+  background: linear-gradient(90deg, transparent, rgb(221 255 247 / 0.22), transparent);
+  filter: blur(2px);
+  pointer-events: none;
+  transform: rotate(11deg);
+  animation: photoScan 5.8s cubic-bezier(0.45, 0, 0.55, 1) 2.3s infinite;
+}
+
+.progressFrame[data-person="rowan"] .photoScan {
+  animation-delay: 3.15s;
+}
+
+.photoReticle {
+  position: absolute;
+  z-index: 5;
+  inset: 9px;
+  opacity: 0.42;
+  pointer-events: none;
+  background:
+    linear-gradient(rgb(121 255 216 / 0.7), rgb(121 255 216 / 0.7)) 0 0 / 17px 1px no-repeat,
+    linear-gradient(rgb(121 255 216 / 0.7), rgb(121 255 216 / 0.7)) 0 0 / 1px 17px no-repeat,
+    linear-gradient(rgb(121 255 216 / 0.7), rgb(121 255 216 / 0.7)) 100% 100% / 17px 1px no-repeat,
+    linear-gradient(rgb(121 255 216 / 0.7), rgb(121 255 216 / 0.7)) 100% 100% / 1px 17px no-repeat;
+}
+
+.photoMeta {
+  position: relative;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 31px;
+  padding: 0 10px;
+  color: rgb(255 255 255 / 0.42);
+  font-family: var(--vitals-mono);
+  font-size: 5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.photoMeta > span:first-child {
+  color: rgb(144 255 221 / 0.86);
+  font-size: 6px;
+  font-weight: 700;
+}
+
+.photoMeta i {
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, rgb(116 255 213 / 0.24), transparent);
+}
+
+.photoMeta b {
+  color: rgb(255 255 255 / 0.22);
+  font-weight: 500;
+}
+
+.stageCaption {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 4px 0;
+  color: rgb(255 255 255 / 0.25);
+  font-family: var(--vitals-mono);
+  font-size: 5px;
+  letter-spacing: 0.2em;
+  opacity: 0;
+  text-transform: uppercase;
+  animation: revealStageCaption 0.8s ease-out 1.72s both;
+}
+
+.stageCaption i {
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, rgb(116 255 213 / 0.2), rgb(87 163 255 / 0.12), transparent);
+}
+
+.stageHorizon {
+  position: absolute;
+  z-index: 1;
+  right: 3%;
+  bottom: 39px;
+  left: 3%;
+  height: 1px;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, rgb(137 255 218 / 0.36), transparent);
+  box-shadow: 0 0 12px rgb(89 255 207 / 0.14);
+  animation: revealHorizon 1.4s ease-out 0.7s both;
+}
+
+.launchTrace {
+  position: absolute;
+  z-index: 2;
+  top: 48%;
+  width: 48vw;
+  height: 1px;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, rgb(147 255 223 / 0.5));
+  filter: drop-shadow(0 0 4px rgb(79 255 202 / 0.45));
+  pointer-events: none;
+}
+
+.launchTrace[data-person="luke"] {
+  right: 51%;
+  transform-origin: 100% 50%;
+  animation: launchTraceLeft 1.18s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both;
+}
+
+.launchTrace[data-person="rowan"] {
+  left: 51%;
+  background: linear-gradient(90deg, rgb(147 255 223 / 0.5), transparent);
+  transform-origin: 0 50%;
+  animation: launchTraceRight 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.46s both;
+}
+
+.signalStack {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  transform-style: preserve-3d;
+  transform-origin: 50% 0;
+  animation: signalArrayDescend 1.55s cubic-bezier(0.16, 1, 0.3, 1) 0.42s both;
+}
+
+.signalStack .module {
+  opacity: 0;
+  transform-origin: 50% 0;
+  backface-visibility: hidden;
+  animation: moduleResolve 1.02s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.signalStack .module:nth-child(1) { animation-delay: 1.02s; }
+.signalStack .module:nth-child(2) { animation-delay: 1.12s; }
+.signalStack .module:nth-child(3) { animation-delay: 1.22s; }
+
+.module {
+  --module-rgb: 255 47 77;
+  --module-hot-rgb: 255 238 236;
+  position: relative;
+  isolation: isolate;
+  min-height: clamp(252px, 20vw, 308px);
+  overflow: hidden;
+  border-top: 1px solid rgb(var(--module-rgb) / 0.1);
+  border-bottom: 1px solid rgb(var(--module-rgb) / 0.11);
+  background:
+    linear-gradient(90deg, rgb(3 6 8 / 0.54), transparent 28%, transparent 74%, rgb(3 6 8 / 0.58)),
+    radial-gradient(70% 100% at 59% 63%, rgb(var(--module-rgb) / 0.045), transparent 70%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.018),
+    0 24px 70px rgb(0 0 0 / 0.08);
+}
+
+.module[data-platform="instagram"] {
+  --module-rgb: 214 77 255;
+  --module-hot-rgb: 255 173 79;
+}
+
+.module[data-platform="tiktok"] {
+  --module-rgb: 25 230 241;
+  --module-hot-rgb: 225 254 255;
+}
+
+.module::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  content: "";
+  opacity: 0.38;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgb(var(--module-rgb) / 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--module-rgb) / 0.025) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(90deg, transparent 7%, black 28%, black 88%, transparent);
+}
+
+.module::after {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  content: "";
+  opacity: 0.16;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0,
+    transparent 3px,
+    rgb(255 255 255 / 0.025) 4px
+  );
+  mix-blend-mode: screen;
+}
+
+.canvas {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.moduleGlow {
+  position: absolute;
+  z-index: 0;
+  top: 35%;
+  left: 58%;
+  width: 48%;
+  aspect-ratio: 1.8;
+  border-radius: 50%;
+  opacity: 0.16;
+  background: rgb(var(--module-rgb) / 0.34);
+  filter: blur(46px);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  animation: glowBreathe 7s ease-in-out infinite alternate;
+}
+
+.scanBeam {
+  position: absolute;
+  z-index: 2;
+  top: 12%;
+  bottom: 14%;
+  left: 25%;
+  width: 80px;
+  opacity: 0.22;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgb(var(--module-hot-rgb) / 0.18), transparent);
+  filter: blur(4px);
+  animation: scanAcross 8s linear infinite;
+}
+
+.module[data-platform="instagram"] .scanBeam {
+  animation-delay: -2.7s;
+  animation-duration: 9.4s;
+}
+
+.module[data-platform="tiktok"] .scanBeam {
+  animation-delay: -5.1s;
+  animation-duration: 6.8s;
+}
+
+.corner {
+  position: absolute;
+  z-index: 5;
+  width: 18px;
+  height: 18px;
+  opacity: 0.28;
+  border-color: rgb(var(--module-rgb) / 0.58);
+  border-style: solid;
+  pointer-events: none;
+}
+
+.corner[data-corner="top-left"] {
+  top: 10px;
+  left: 8px;
+  border-width: 1px 0 0 1px;
+}
+
+.corner[data-corner="bottom-right"] {
+  right: 8px;
+  bottom: 10px;
+  border-width: 0 1px 1px 0;
+}
+
+/* -- Card layout ----------------------------------------------------------- */
+/* The card is a grid, not a stack of absolutely positioned labels: identity
+   on the left, the delta tiles and view controls across the top, the lens
+   (chart or terrain) in the middle, and one context line along the bottom.
+   The terrain canvas still fills the whole card underneath; every piece of
+   readable text sits on its own dark scrim. Nothing renders below 9px. */
+
+.module {
+  --delta-up-rgb: 73 255 180;
+  --delta-down-rgb: 255 76 91;
+  --delta-flat-rgb: 198 245 233;
+  --card-min-font: 9px;
+  display: grid;
+  grid-template-columns: minmax(118px, 24%) minmax(0, 1fr);
+  grid-template-rows: auto auto minmax(0, 1fr);
+  grid-template-areas:
+    "identity top"
+    "identity bar"
+    "identity lens";
+  column-gap: 12px;
+  row-gap: 6px;
+  padding: 10px 14px 10px 18px;
+}
+
+.identity {
+  position: relative;
+  z-index: 6;
+  grid-area: identity;
+  align-self: start;
+  min-width: 0;
+  padding-top: 2px;
+}
+
+.identityFoot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 8px;
+  margin-top: 5px;
+}
+
+.moduleTop {
+  position: relative;
+  z-index: 7;
+  grid-area: top;
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.deltaFootnote {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 6px;
+  margin: 0;
+  padding: 3px 8px;
+  border-left: 2px solid rgb(var(--module-rgb) / 0.4);
+  background: rgb(2 8 10 / 0.72);
+  color: rgb(255 255 255 / 0.56);
+  font-family: var(--vitals-mono);
+  font-size: var(--card-min-font);
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+}
+
+.deltaFootnote b {
+  color: rgb(255 255 255 / 0.4);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.deltaFootnote i {
+  margin-right: 6px;
+  font-style: normal;
+  opacity: 0.5;
+}
+
+.terrainSpace {
+  grid-area: lens;
+  min-height: 0;
+}
+
+.platform,
+.metricName,
+.deltaTile,
+.contextRow,
+.rangeBar {
+  font-family: var(--vitals-mono);
+  text-transform: uppercase;
+}
+
+.platform {
+  color: rgb(var(--module-rgb));
+  font-size: clamp(9px, 0.75vw, 12px);
+  font-weight: 650;
+  letter-spacing: 0.23em;
+  text-shadow: 0 0 14px rgb(var(--module-rgb) / 0.28);
+}
+
+/* The tile's demo marker: worn only while this platform still renders demo
+   data (see features/dashboard/demo-status.ts) — a connect-agent that wires
+   the platform for real flips its flag there and this chip disappears. */
+.demoChip {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  margin-top: 3px;
+  padding: 2px 5px 1px;
+  border: 1px solid rgb(var(--module-rgb) / 0.35);
+  color: rgb(var(--module-rgb) / 0.82);
+  background: rgb(var(--module-rgb) / 0.07);
+  font-family: var(--vitals-mono);
+  font-size: 6px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* The YouTube title is the studio doorway: same voice as .platform, plus a
+   travel arrow, because pressing it slides the page over to the studio. */
+.platformOpen {
+  display: flex;
+  align-items: baseline;
+  width: fit-content;
+  gap: 7px;
+  padding: 0;
+  border: 0;
+  color: rgb(var(--module-rgb));
+  background: transparent;
+  font-family: inherit;
+  font-size: clamp(9px, 0.75vw, 12px);
+  font-weight: 650;
+  letter-spacing: 0.23em;
+  text-shadow: 0 0 14px rgb(var(--module-rgb) / 0.28);
+  cursor: pointer;
+}
+
+.platformOpen i {
+  font-style: normal;
+  opacity: 0.7;
+  transition: transform 200ms var(--vitals-ease), opacity 200ms ease;
+}
+
+.platformOpen:hover i,
+.platformOpen:focus-visible i {
+  transform: translateX(3px);
+  opacity: 1;
+}
+
+.metricValue {
+  margin-top: 6px;
+  color: var(--vitals-text);
+  font-family: var(--vitals-serif);
+  font-size: clamp(30px, 2.6vw, 46px);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.025em;
+  line-height: 0.96;
+  text-shadow: 0 0 26px rgb(var(--module-hot-rgb) / 0.08);
+}
+
+.metricName {
+  margin: 0;
+  color: rgb(255 255 255 / 0.62);
+  font-size: var(--card-min-font);
+  letter-spacing: 0.16em;
+}
+
+/* -- Delta tiles ----------------------------------------------------------- */
+
+.deltaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.deltaTile {
+  --delta-rgb: var(--delta-flat-rgb);
+  display: grid;
+  flex: 1 1 96px;
+  gap: 2px;
+  min-width: 96px;
+  max-width: 200px;
+  padding: 5px 8px 4px;
+  border: 1px solid rgb(var(--delta-rgb) / 0.16);
+  border-radius: 3px;
+  background:
+    linear-gradient(180deg, rgb(var(--delta-rgb) / 0.05), transparent 60%),
+    rgb(2 8 10 / 0.78);
+  color: rgb(255 255 255 / 0.74);
+  font-variant-numeric: tabular-nums;
+}
+
+.deltaTile[data-sign="up"] {
+  --delta-rgb: var(--delta-up-rgb);
+}
+
+.deltaTile[data-sign="down"] {
+  --delta-rgb: var(--delta-down-rgb);
+}
+
+.deltaTile[data-sign="na"] {
+  --delta-rgb: 255 255 255;
+  border-style: dashed;
+  border-color: rgb(255 255 255 / 0.12);
+  color: rgb(255 255 255 / 0.5);
+}
+
+.deltaLabel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2px 6px;
+  color: rgb(255 255 255 / 0.5);
+  font-size: var(--card-min-font);
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+.deltaRange {
+  margin-left: auto;
+  padding: 1px 4px;
+  border-radius: 2px;
+  background: rgb(var(--module-rgb) / 0.16);
+  color: rgb(var(--module-hot-rgb));
+  font-size: var(--card-min-font);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.deltaTile[data-fixed-range="true"] .deltaRange {
+  background: rgb(255 255 255 / 0.08);
+  color: rgb(255 255 255 / 0.62);
+  outline: 1px dashed rgb(255 255 255 / 0.18);
+  outline-offset: -1px;
+}
+
+.deltaValue {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  color: rgb(var(--delta-rgb));
+  font-family: var(--vitals-serif);
+  font-size: clamp(15px, 1.15vw, 20px);
+  font-weight: 400;
+  line-height: 1;
+  white-space: nowrap;
+  text-shadow: 0 0 10px rgb(var(--delta-rgb) / 0.25);
+}
+
+.deltaTile[data-sign="na"] .deltaValue,
+.deltaTile[data-key="likes"] .deltaValue,
+.deltaTile[data-key="interactions"] .deltaValue {
+  color: rgb(255 255 255 / 0.8);
+  text-shadow: none;
+}
+
+.deltaValue i {
+  font-family: var(--vitals-mono);
+  font-size: var(--card-min-font);
+  font-style: normal;
+}
+
+.deltaSub {
+  display: block;
+  color: rgb(255 255 255 / 0.48);
+  font-size: var(--card-min-font);
+  letter-spacing: 0.06em;
+  line-height: 1.25;
+}
+
+/* -- Context line ---------------------------------------------------------- */
+
+.contextRow {
+  position: relative;
+  z-index: 7;
+  grid-area: context;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 24px;
+  margin: 0 -14px 0 -18px;
+  padding: 4px 14px 5px 18px;
+  border-top: 1px solid rgb(var(--module-rgb) / 0.12);
+  background: linear-gradient(180deg, rgb(2 8 10 / 0.94), rgb(1 5 7 / 0.9));
+  color: rgb(255 255 255 / 0.7);
+  font-size: var(--card-min-font);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.1em;
+}
+
+.contextBody {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 3px 14px;
+  min-width: 0;
+}
+
+.contextRow dl {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 3px 14px;
+  min-width: 0;
+  margin: 0;
+}
+
+.contextRow dl > div {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.contextRow dt {
+  color: rgb(255 255 255 / 0.42);
+}
+
+.contextRow dd {
+  margin: 0;
+  color: rgb(255 255 255 / 0.84);
+}
+
+.contextRow dd small {
+  margin-left: 4px;
+  color: rgb(255 255 255 / 0.42);
+  font-size: var(--card-min-font);
+}
+
+/* -- Lens bar --------------------------------------------------------------- */
+/* One thin row between the tiles and the graph: what the graph shows on the
+   left (and how much of the window reported, only when partial), the view
+   controls on the right. */
+.lensBar {
+  position: relative;
+  z-index: 7;
+  grid-area: bar;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.lensTitle {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: rgb(255 255 255 / 0.46);
+  font-family: var(--vitals-mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.lensTitle b {
+  padding: 0 4px;
+  border: 1px solid rgb(var(--module-rgb) / 0.3);
+  border-radius: 2px;
+  color: rgb(255 255 255 / 0.5);
+  font-weight: 500;
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: none;
+}
+
+/* -- Details drawer -------------------------------------------------------- */
+/* Everything that is not the number, the tiles or the graph. Opens over the
+   card from its control cluster, reads as one quiet mono ledger, closes on
+   Escape / outside click / ×. */
+.detailsButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 7px;
+  border: 1px solid rgb(var(--module-rgb) / 0.22);
+  border-radius: 2px;
+  background: rgb(2 8 10 / 0.72);
+  color: rgb(255 255 255 / 0.55);
+  font-family: var(--vitals-mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.detailsButton i {
+  width: 5px;
+  height: 5px;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: translateY(-1px) rotate(45deg);
+  transition: transform 160ms ease;
+}
+
+.detailsButton:hover,
+.detailsButton:focus-visible {
+  color: rgb(255 255 255 / 0.85);
+  border-color: rgb(var(--module-rgb) / 0.45);
+  outline: none;
+}
+
+.detailsButton[aria-expanded="true"] {
+  color: rgb(var(--module-hot-rgb));
+  border-color: rgb(var(--module-rgb) / 0.66);
+}
+
+.detailsButton[aria-expanded="true"] i {
+  transform: translateY(1px) rotate(-135deg);
+}
+
+.detailsDrawer {
+  position: absolute;
+  z-index: 14;
+  inset: 8px;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 8px;
+  padding: 10px 14px 12px;
+  border: 1px solid rgb(var(--module-rgb) / 0.32);
+  border-radius: 4px;
+  background:
+    linear-gradient(180deg, rgb(var(--module-rgb) / 0.07), transparent 38%),
+    rgb(3 6 8 / 0.94);
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 0.6),
+    0 18px 40px rgb(0 0 0 / 0.55),
+    inset 0 1px 0 rgb(var(--module-hot-rgb) / 0.12);
+  backdrop-filter: blur(10px);
+  animation: detailsDrop 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.detailsDrawer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgb(var(--module-hot-rgb) / 0.7), rgb(var(--module-rgb) / 0.2) 45%, transparent);
+  animation: detailsSweep 520ms cubic-bezier(0.2, 0.8, 0.2, 1) 60ms both;
+}
+
+.detailsHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: rgb(var(--module-hot-rgb) / 0.85);
+  font-family: var(--vitals-mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.detailsClose {
+  width: 22px;
+  height: 22px;
+  border: 1px solid rgb(var(--module-rgb) / 0.3);
+  border-radius: 2px;
+  background: transparent;
+  color: rgb(255 255 255 / 0.7);
+  font: 14px/1 var(--vitals-mono);
+  cursor: pointer;
+}
+
+.detailsClose:hover,
+.detailsClose:focus-visible {
+  color: #fff;
+  border-color: rgb(var(--module-rgb) / 0.6);
+  outline: none;
+}
+
+.detailsBody {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+
+.detailsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 6px 18px;
+  margin: 0;
+}
+
+.detailsList > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 0;
+  border-bottom: 1px solid rgb(255 255 255 / 0.07);
+  font-family: var(--vitals-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.detailsList dt {
+  color: rgb(255 255 255 / 0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+.detailsList dd {
+  margin: 0;
+  color: rgb(255 255 255 / 0.88);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.detailsList dd small {
+  margin-left: 6px;
+  color: rgb(255 255 255 / 0.4);
+  font-size: 9px;
+}
+
+.detailsLine {
+  display: flex;
+  gap: 10px;
+  margin: 0;
+  color: rgb(255 255 255 / 0.8);
+  font-family: var(--vitals-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+
+.detailsLine b,
+.detailsNotes b {
+  color: rgb(255 255 255 / 0.45);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.detailsNotes {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: rgb(255 255 255 / 0.6);
+  font-family: var(--vitals-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+}
+
+@keyframes detailsDrop {
+  from { clip-path: inset(0 0 100% 0); opacity: 0.6; }
+  to { clip-path: inset(0 0 0 0); opacity: 1; }
+}
+
+@keyframes detailsSweep {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .detailsDrawer,
+  .detailsDrawer::before {
+    animation: none;
+  }
+}
+
+.statusNote {
+  margin: 0;
+  color: rgb(var(--module-rgb) / 0.85);
+  white-space: nowrap;
+}
+
+/* -- Shared change window ------------------------------------------------- */
+
+.rangeBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px;
+  color: rgb(255 255 255 / 0.4);
+  font-size: var(--card-min-font, 9px);
+  letter-spacing: 0.18em;
+}
+
+.rangeBarLabel {
+  white-space: nowrap;
+}
+
+/* Feed chips sit at the far end of the window row. */
+.rangeBarFeeds {
+  display: flex;
+  justify-content: flex-end;
+  flex: 1;
+  min-width: 0;
+}
+
+.rangeControl {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid rgb(167 243 208 / 0.14);
+  border-radius: 3px;
+  background: rgb(2 8 10 / 0.7);
+}
+
+.rangeButton {
+  min-width: 34px;
+  padding: 3px 8px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: transparent;
+  color: rgb(255 255 255 / 0.55);
+  font-family: var(--vitals-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.rangeButton:hover {
+  color: rgb(255 255 255 / 0.85);
+}
+
+.rangeButton[aria-pressed="true"] {
+  border-color: rgb(167 243 208 / 0.4);
+  background: rgb(167 243 208 / 0.12);
+  color: rgb(214 255 238);
+  box-shadow: 0 0 10px rgb(167 243 208 / 0.14);
+}
+
+.rangeButton:focus-visible {
+  outline: 1px solid rgb(214 255 238 / 0.8);
+  outline-offset: 1px;
+}
+
+@keyframes scanAcross {
+  from { transform: translateX(-130%); }
+  to { transform: translateX(720%); }
+}
+
+@keyframes glowBreathe {
+  from { opacity: 0.1; transform: translate(-50%, -50%) scale(0.88); }
+  to { opacity: 0.24; transform: translate(-50%, -50%) scale(1.16); }
+}
+
+@keyframes dockFromLuke {
+  0% {
+    opacity: 0;
+    filter: blur(15px) brightness(0.42);
+    transform: translate3d(-48vw, 18px, -560px) rotateY(66deg) rotateZ(-4deg) scale(0.16);
+  }
+  22% { opacity: 0.48; }
+  68% {
+    opacity: 1;
+    filter: blur(0) brightness(1.08);
+    transform: translate3d(11px, -4px, 26px) rotateY(-3.2deg) rotateZ(0.4deg) scale(1.035);
+  }
+  84% {
+    transform: translate3d(-3px, 1px, -5px) rotateY(0.8deg) scale(0.992);
+  }
+  100% {
+    opacity: 1;
+    filter: none;
+    transform: translate3d(0, 0, 0) rotateY(0) rotateZ(0) scale(1);
+  }
+}
+
+@keyframes dockFromRowan {
+  0% {
+    opacity: 0;
+    filter: blur(15px) brightness(0.42);
+    transform: translate3d(48vw, 18px, -560px) rotateY(-66deg) rotateZ(4deg) scale(0.16);
+  }
+  22% { opacity: 0.48; }
+  68% {
+    opacity: 1;
+    filter: blur(0) brightness(1.08);
+    transform: translate3d(-11px, -4px, 26px) rotateY(3.2deg) rotateZ(-0.4deg) scale(1.035);
+  }
+  84% {
+    transform: translate3d(3px, 1px, -5px) rotateY(-0.8deg) scale(0.992);
+  }
+  100% {
+    opacity: 1;
+    filter: none;
+    transform: translate3d(0, 0, 0) rotateY(0) rotateZ(0) scale(1);
+  }
+}
+
+@keyframes signalArrayDescend {
+  0% {
+    opacity: 0.08;
+    filter: blur(7px);
+    transform: translate3d(0, -210px, -240px) rotateX(36deg) scale(0.88);
+  }
+  44% {
+    opacity: 0.56;
+    filter: blur(2px);
+    transform: translate3d(0, -70px, -90px) rotateX(15deg) scale(0.95);
+  }
+  78% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translate3d(0, 8px, 10px) rotateX(-1.2deg) scale(1.006);
+  }
+  100% {
+    opacity: 1;
+    filter: none;
+    transform: translate3d(0, 0, 0) rotateX(0) scale(1);
+  }
+}
+
+@keyframes moduleResolve {
+  0% {
+    opacity: 0;
+    filter: blur(5px);
+    transform: translate3d(0, -34px, -180px) rotateX(48deg) scale(0.9);
+  }
+  72% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translate3d(0, 3px, 8px) rotateX(-1deg) scale(1.004);
+  }
+  100% {
+    opacity: 1;
+    filter: none;
+    transform: translate3d(0, 0, 0) rotateX(0) scale(1);
+  }
+}
+
+@keyframes photoHover {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(0, -2px, 7px) scale(1.006); }
+}
+
+@keyframes photoScan {
+  0%, 12% { transform: translateX(0) rotate(11deg); opacity: 0; }
+  22% { opacity: 0.72; }
+  54% { opacity: 0.36; }
+  68%, 100% { transform: translateX(1100%) rotate(11deg); opacity: 0; }
+}
+
+@keyframes revealStageCaption {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes revealHorizon {
+  0% { opacity: 0; transform: scaleX(0); }
+  52% { opacity: 0.7; }
+  100% { opacity: 0.3; transform: scaleX(1); }
+}
+
+@keyframes launchTraceLeft {
+  0% { opacity: 0; transform: scaleX(0); }
+  36% { opacity: 0.8; transform: scaleX(1); }
+  100% { opacity: 0; transform: scaleX(0.08); }
+}
+
+@keyframes launchTraceRight {
+  0% { opacity: 0; transform: scaleX(0); }
+  36% { opacity: 0.8; transform: scaleX(1); }
+  100% { opacity: 0; transform: scaleX(0.08); }
+}
+
+@keyframes stagePulse {
+  from { opacity: 0.3; transform: scaleX(0.86); }
+  to { opacity: 0.68; transform: scaleX(1.08); }
+}
+
+@media (max-width: 1380px) {
+  .core {
+    padding-right: 4px;
+    padding-left: 4px;
+  }
+
+  .progressStage {
+    padding-right: 2px;
+    padding-left: 2px;
+  }
+
+  .photoMeta {
+    gap: 5px;
+    padding-right: 8px;
+    padding-left: 8px;
+    letter-spacing: 0.13em;
+  }
+
+  .metricValue {
+    font-size: clamp(34px, 3.35vw, 47px);
+  }
+}
+
+@media (max-width: 1220px) {
+  .core {
+    width: min(100%, 980px);
+    margin: 0 auto;
+    padding: 30px 20px 12px;
+  }
+
+  .progressStageInner {
+    gap: clamp(10px, 2vw, 20px);
+  }
+
+  .progressFrame {
+    border-radius: 17px;
+  }
+
+  .photoMeta {
+    min-height: 34px;
+    font-size: 6px;
+  }
+
+  .module {
+    min-height: 285px;
+  }
+
+  .metricValue {
+    font-size: clamp(42px, 5vw, 58px);
+  }
+}
+
+@media (min-width: 1221px) and (min-height: 680px) {
+  /* The social column fills the control-room height and, when the three
+     cards need more than that, scrolls inside it (scrollbar hidden) instead
+     of cutting the last card off. Rows are at least their content height, so
+     nothing is ever clipped; when there is spare room they still stretch. */
+  .core {
+    height: 100%;
+    min-height: 0;
+    grid-template-rows: auto max-content auto minmax(min-content, 1fr);
+    align-content: stretch;
+    gap: 6px;
+    padding: 8px 8px 6px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+  }
+
+  .core::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* The photo stage keeps its natural height (16:9 frames + captions): the
+     cards below are what flex, and when even they cannot, the column scrolls.
+     Without this the grid squeezes the stage first and the frames overflow
+     onto the window control. */
+  .progressStage {
+    min-height: 0;
+    padding: 4px 7px 8px;
+  }
+
+  /* One person in the starter: the single frame's width is capped by the
+     viewport height as well as the column, so the whole column — stage,
+     window control, three cards — fits a 1080p control room with no internal
+     scroll. The height term is the room left under the top bar once the
+     header, window control, cards and stage chrome are paid for; the frame
+     turns that back into a width (16:9 plus its meta row). */
+  .progressStageInner {
+    grid-template-columns: minmax(
+      0,
+      clamp(
+        220px,
+        (100dvh - 760px) * 1.55,
+        50% - clamp(4px, 0.55vw, 7.5px)
+      )
+    );
+  }
+
+  .signalStack {
+    height: auto;
+    min-height: 100%;
+    grid-template-rows: repeat(3, minmax(min-content, 1fr));
+    gap: 6px;
+    overflow: visible;
+  }
+
+  .module {
+    height: 100%;
+    min-height: 0;
+  }
+
+  /* Control-room height: three cards share the space under the progress
+     stage, so each is ~160-260px tall. The context line moves into the
+     identity column (which otherwise sits empty below the headline) and the
+     lens keeps the full remaining height instead of being squeezed above a
+     bottom bar. */
+  .module {
+    grid-template-columns: minmax(150px, 36%) minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(40px, 1fr);
+    grid-template-areas:
+      "identity top"
+      "bar bar"
+      "lens lens";
+    column-gap: 10px;
+    row-gap: 4px;
+    padding: 5px 12px 5px 14px;
+  }
+
+  /* (Scoped under .module so these win over the base chart rules declared
+     later in this file.) */
+  .module .chartPlot {
+    min-height: 40px;
+  }
+
+  .module .chartLayer {
+    gap: 2px;
+    padding-bottom: 0;
+  }
+
+  .module .chartFrame {
+    gap: 2px;
+  }
+
+  .module .chartXLabels {
+    height: 10px;
+  }
+
+  .signalStack {
+    gap: 4px;
+  }
+
+  .contextRow {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 4px;
+    min-height: 0;
+    margin: 0;
+    padding: 2px 8px 0 0;
+    border-top: 0;
+    background: linear-gradient(90deg, rgb(2 8 10 / 0.7), rgb(2 8 10 / 0.35) 80%, transparent);
+    letter-spacing: 0.05em;
+    line-height: 1.25;
+  }
+
+  .contextBody {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+  }
+
+  .contextRow dl {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .contextRow dl > div {
+    flex-wrap: wrap;
+    gap: 0 5px;
+  }
+
+  .deltaSub {
+    letter-spacing: 0.04em;
+  }
+}
+
+/* Real-browser control rooms: Chrome on a 1080p monitor leaves ~945px and a
+   MacBook ~880px, so the compressed tier starts at 960 rather than 850. */
+@media (min-width: 1221px) and (min-height: 680px) and (max-height: 960px) {
+  .core {
+    gap: 6px;
+    padding: 8px 4px 6px;
+  }
+
+  .coreHeader {
+    min-height: 10px;
+    font-size: 5px;
+  }
+
+  .progressStage {
+    padding: 2px 2px 5px;
+  }
+
+  .photoMeta {
+    min-height: 21px;
+  }
+
+  .stageCaption {
+    margin-top: 3px;
+  }
+
+  .stageHorizon {
+    bottom: 22px;
+  }
+
+  .signalStack {
+    gap: 5px;
+  }
+
+  .platform,
+  .platformOpen {
+    font-size: 9px;
+  }
+
+  .identityFoot {
+    margin-top: 2px;
+  }
+
+  .metricValue {
+    margin-top: 2px;
+    font-size: clamp(22px, 2vw, 28px);
+  }
+
+  .module {
+    column-gap: 8px;
+    row-gap: 3px;
+    padding: 6px 10px 6px 12px;
+  }
+
+  .moduleTop {
+    gap: 3px;
+  }
+
+  .deltaRow {
+    gap: 4px;
+  }
+
+  .deltaTile {
+    min-width: 86px;
+    padding: 3px 6px 3px;
+    gap: 1px;
+  }
+
+  .deltaValue {
+    font-size: clamp(13px, 1vw, 16px);
+  }
+
+  .deltaSub {
+    letter-spacing: 0;
+  }
+
+  .deltaFootnote {
+    padding: 2px 6px;
+    line-height: 1.2;
+  }
+
+  .metricName {
+    letter-spacing: 0.12em;
+  }
+
+  .contextRow {
+    gap: 3px;
+    line-height: 1.2;
+  }
+
+  .contextBody,
+  .contextRow dl {
+    gap: 1px;
+  }
+
+  .rangeBar {
+    padding: 0 4px;
+  }
+
+  .rangeButton {
+    min-width: 30px;
+    padding: 1px 6px;
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 620px) {
+  .core {
+    gap: 10px;
+    padding: 22px 10px 8px;
+  }
+
+  .coreHeader {
+    padding: 0 4px;
+    font-size: 5px;
+  }
+
+  .progressStage {
+    padding: 7px 0 14px;
+  }
+
+  .progressStageInner {
+    gap: 7px;
+  }
+
+  .progressFrame {
+    border-radius: 10px;
+  }
+
+  .photoReticle {
+    inset: 6px;
+    background-size: 11px 1px, 1px 11px, 11px 1px, 1px 11px;
+  }
+
+  .photoMeta {
+    gap: 4px;
+    min-height: 27px;
+    padding: 0 6px;
+    font-size: 4px;
+    letter-spacing: 0.08em;
+  }
+
+  .photoMeta > span:first-child {
+    font-size: 5px;
+  }
+
+  .stageCaption {
+    gap: 6px;
+    margin-top: 7px;
+    font-size: 4px;
+    letter-spacing: 0.1em;
+  }
+
+  .launchTrace {
+    width: 34vw;
+  }
+
+  .signalStack {
+    gap: 10px;
+  }
+
+  .module {
+    min-height: 290px;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto minmax(150px, 1fr);
+    grid-template-areas:
+      "identity"
+      "top"
+      "bar"
+      "lens";
+    row-gap: 8px;
+    padding: 14px 12px 0 14px;
+  }
+
+  .metricValue {
+    font-size: clamp(34px, 11vw, 46px);
+  }
+
+  .deltaRow {
+    gap: 6px;
+  }
+
+  .deltaTile {
+    flex: 1 1 100px;
+    max-width: none;
+  }
+
+  .contextRow {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 6px 10px;
+    margin: 0 -12px 0 -14px;
+    padding: 6px 12px 8px 14px;
+  }
+
+
+  .rangeBar {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 2px;
+  }
+}
+
+/* During the spoken social briefing the real, data-backed module becomes the
+   hero object. The dashboard never swaps to a duplicate card: the same canvas
+   is resized in place, which keeps its live terrain and readouts truthful. */
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .core,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .core,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .core {
+  position: fixed;
+  z-index: 10;
+  inset: 0;
+  display: block;
+  width: 100vw;
+  height: 100dvh;
+  min-height: 0;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  opacity: 1;
+  filter: none;
+  pointer-events: none;
+  transform: none;
+  perspective: 1800px;
+}
+
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .coreHeader,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .coreHeader,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .coreHeader,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .progressStage,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .progressStage,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .progressStage,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .rangeBar,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .rangeBar,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .rangeBar {
+  opacity: 0;
+  filter: blur(12px) brightness(0.34);
+  transform: translate3d(0, -22px, -180px) scale(0.96);
+  transition:
+    opacity 260ms ease,
+    filter 420ms ease,
+    transform 620ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .signalStack,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .signalStack,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .signalStack {
+  position: fixed;
+  inset: 0;
+  display: block;
+  width: 100vw;
+  height: 100dvh;
+  min-height: 0;
+  overflow: visible;
+  animation: none;
+  transform: none;
+  perspective: 1800px;
+  transform-style: preserve-3d;
+}
+
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .signalStack .module,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .signalStack .module,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .signalStack .module {
+  position: fixed;
+  top: 52%;
+  left: 50%;
+  width: min(92vw, 1640px);
+  height: clamp(330px, 54vh, 620px);
+  min-height: 0;
+  opacity: 0;
+  filter: blur(12px) saturate(0.28) brightness(0.3);
+  box-shadow:
+    0 52px 150px rgb(0 0 0 / 0.72),
+    inset 0 1px 0 rgb(255 255 255 / 0.025);
+  transform-origin: 50% 50%;
+  will-change: opacity, filter, transform, clip-path;
+  animation: cinematicPlatformStandby 480ms ease both;
+}
+
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .module[data-platform="youtube"],
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .module[data-platform="instagram"],
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .module[data-platform="tiktok"] {
+  z-index: 12;
+  opacity: 1;
+  filter:
+    brightness(1.12)
+    saturate(1.2)
+    drop-shadow(0 0 36px rgb(var(--module-rgb) / 0.2));
+  box-shadow:
+    0 62px 190px rgb(0 0 0 / 0.78),
+    0 0 0 1px rgb(var(--module-rgb) / 0.22),
+    0 0 92px rgb(var(--module-rgb) / 0.1),
+    inset 0 1px 0 rgb(var(--module-hot-rgb) / 0.08);
+  animation: cinematicPlatformAcquire 680ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .module[data-platform="youtube"]::after,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .module[data-platform="instagram"]::after,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .module[data-platform="tiktok"]::after {
+  opacity: 0.28;
+  animation: cinematicSignalLock 680ms steps(1) both;
+}
+
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .module,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .module,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .module {
+  grid-template-columns: minmax(200px, 27%) minmax(0, 1fr);
+  column-gap: clamp(18px, 2vw, 36px);
+  row-gap: 12px;
+  padding: clamp(24px, 3.5vh, 44px) clamp(30px, 4.4vw, 78px) 0;
+}
+
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .platform,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .platform,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .platform,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .platformOpen,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .platformOpen,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .platformOpen {
+  font-size: clamp(12px, 1.15vw, 19px);
+  letter-spacing: 0.25em;
+}
+
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .metricName,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .metricName,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .metricName {
+  margin-top: 12px;
+  font-size: clamp(9px, 0.7vw, 11px);
+}
+
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .metricValue,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .metricValue,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .metricValue {
+  margin-top: 12px;
+  font-size: clamp(54px, 6.5vw, 110px);
+}
+
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .deltaTile,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .deltaTile,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .deltaTile {
+  gap: 5px;
+  min-width: 150px;
+  max-width: 260px;
+  padding: 10px 14px;
+}
+
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .deltaLabel,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .deltaLabel,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .deltaLabel,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .deltaRange,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .deltaRange,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .deltaRange,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .deltaSub,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .deltaSub,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .deltaSub {
+  font-size: clamp(9px, 0.62vw, 11px);
+}
+
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .deltaValue,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .deltaValue,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .deltaValue {
+  font-size: clamp(22px, 2.1vw, 36px);
+}
+
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .contextRow,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .contextRow,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .contextRow {
+  min-height: 56px;
+  margin: 0 calc(-1 * clamp(30px, 4.4vw, 78px));
+  padding: 12px clamp(30px, 4.4vw, 78px);
+  font-size: clamp(9px, 0.7vw, 12px);
+}
+
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .controlButton,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .controlButton,
+:global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .controlButton {
+  padding: 4px 10px;
+  font-size: 10px;
+}
+
+@keyframes cinematicPlatformAcquire {
+  0% {
+    opacity: 0;
+    clip-path: inset(48% 0 48% 0);
+    filter: blur(16px) brightness(2.1) saturate(0);
+    transform: translate3d(-50%, -24%, -260px) rotateX(17deg) scale(0.8);
+  }
+  28% {
+    opacity: 0.68;
+    clip-path: inset(18% 0 15% 0);
+    filter: blur(6px) brightness(1.55) saturate(0.72);
+    transform: translate3d(-50%, -43%, -60px) rotateX(5deg) scale(0.94);
+  }
+  48% {
+    opacity: 0.96;
+    clip-path: inset(0);
+    filter: blur(0) brightness(1.35) saturate(1.3);
+    transform: translate3d(calc(-50% - 7px), -51%, 70px) rotateX(-1deg) scale(1.018);
+  }
+  55% {
+    transform: translate3d(calc(-50% + 4px), -50%, 58px) scale(0.996);
+  }
+  66% {
+    transform: translate3d(calc(-50% - 2px), -50%, 62px) scale(1.004);
+  }
+  100% {
+    opacity: 1;
+    clip-path: inset(0);
+    filter: brightness(1.12) saturate(1.2);
+    transform: translate3d(-50%, -50%, 60px) rotateX(0) scale(1);
+  }
+}
+
+@keyframes cinematicPlatformStandby {
+  from {
+    opacity: 0.22;
+    filter: blur(3px) saturate(0.5) brightness(0.48);
+    transform: translate3d(-50%, -50%, -20px) scale(0.97);
+  }
+  to {
+    opacity: 0;
+    filter: blur(12px) saturate(0.28) brightness(0.3);
+    transform: translate3d(-50%, -66%, -240px) scale(0.88);
+  }
+}
+
+@keyframes cinematicSignalLock {
+  0%, 12% { opacity: 0; transform: translateX(-2%); }
+  13% { opacity: 0.65; transform: translateX(1.2%); clip-path: inset(8% 0 72%); }
+  17% { opacity: 0.18; transform: translateX(-0.6%); clip-path: inset(54% 0 26%); }
+  22%, 100% { opacity: 0.28; transform: translateX(0); clip-path: inset(0); }
+}
+
+@media (max-width: 720px) {
+  :global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .signalStack .module,
+  :global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .signalStack .module,
+  :global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .signalStack .module {
+    top: 51%;
+    width: calc(100vw - 22px);
+    height: min(63dvh, 500px);
+    min-height: 350px;
+  }
+
+  :global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .metricValue,
+  :global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .metricValue,
+  :global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .metricValue {
+    font-size: clamp(42px, 14vw, 64px);
+  }
+  :global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .module,
+  :global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .module,
+  :global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .module {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "identity"
+      "top"
+      "bar"
+      "lens";
+    padding: 18px 18px 12px;
+  }
+
+  :global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .contextRow,
+  :global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .contextRow,
+  :global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .contextRow {
+    min-height: 40px;
+    margin: 0 -18px;
+    padding: 8px 18px;
+  }
+}
+
+@media (max-height: 620px) {
+  :global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .signalStack .module,
+  :global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .signalStack .module,
+  :global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .signalStack .module {
+    top: 53%;
+    height: min(57dvh, 340px);
+    min-height: 260px;
+  }
+
+  :global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.youtube"]) .metricValue,
+  :global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.instagram"]) .metricValue,
+  :global(html[data-rowzy-cinematic="active"][data-rowzy-cinematic-focus="social"][data-rowzy-cinematic-exiting="false"][data-rowzy-cinematic-stage="social.tiktok"]) .metricValue {
+    font-size: clamp(42px, 5.2vw, 74px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .moduleGlow,
+  .scanBeam,
+  .progressStage::after,
+  .progressFrame,
+  .photoViewport,
+  .photoScan,
+  .stageCaption,
+  .stageHorizon,
+  .launchTrace,
+  .signalStack,
+  .signalStack .module {
+    animation: none;
+  }
+
+  .progressFrame,
+  .stageCaption,
+  .stageHorizon,
+  .signalStack,
+  .signalStack .module {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+}
+
+/* -- Interactive signal chart -------------------------------------------- */
+/* The chart mode replaces the terrain as the module's data lens: the same
+   plot region, the same platform accent (--module-rgb / --module-hot-rgb),
+   hairline grid and mono micro-labels. The terrain canvas stays mounted and
+   merely recedes, so the cinematic presentation keeps its live object. */
+
+.module[data-mode="chart"] .canvas {
+  opacity: 0.22;
+}
+
+.controlCluster {
+  display: flex;
+  gap: 3px;
+  pointer-events: auto;
+}
+
+.controlButton {
+  padding: 3px 7px;
+  border: 1px solid rgb(var(--module-rgb) / 0.22);
+  border-radius: 2px;
+  background: rgb(2 8 10 / 0.72);
+  color: rgb(255 255 255 / 0.55);
+  font-family: var(--vitals-mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.controlButton:hover {
+  color: rgb(255 255 255 / 0.85);
+  border-color: rgb(var(--module-rgb) / 0.45);
+}
+
+.controlButton[aria-pressed="true"] {
+  color: rgb(var(--module-hot-rgb));
+  border-color: rgb(var(--module-rgb) / 0.66);
+  background: rgb(var(--module-rgb) / 0.14);
+  box-shadow: 0 0 10px rgb(var(--module-rgb) / 0.18);
+}
+
+.controlButton:focus-visible {
+  outline: 1px solid rgb(var(--module-hot-rgb) / 0.8);
+  outline-offset: 1px;
+}
+
+.chartLayer {
+  position: relative;
+  z-index: 5;
+  grid-area: lens;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 3px;
+  min-width: 0;
+  min-height: 0;
+  padding-bottom: 2px;
+}
+
+.chartFrame {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 3px;
+  min-height: 0;
+}
+
+.chartPlot {
+  position: relative;
+  container-type: size;
+  /* A graph is never shorter than this, whatever the viewport: the axis
+     title, the peak label and the line need room to be read. */
+  min-height: 52px;
+  cursor: crosshair;
+  touch-action: pan-y;
+  outline: none;
+}
+
+.chartPlot:focus-visible {
+  box-shadow: 0 0 0 1px rgb(var(--module-hot-rgb) / 0.55);
+}
+
+.chartSvg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.chartGridLine {
+  stroke: rgb(var(--module-rgb) / 0.14);
+  stroke-width: 0.6;
+  stroke-dasharray: 2 6;
+  vector-effect: non-scaling-stroke;
+}
+
+.chartArea {
+  fill: rgb(var(--module-rgb) / 0.12);
+  stroke: none;
+}
+
+.chartLine {
+  fill: none;
+  stroke: rgb(var(--module-rgb) / 0.9);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 5px rgb(var(--module-rgb) / 0.4));
+}
+
+.chartCrosshair {
+  stroke: rgb(var(--module-hot-rgb) / 0.55);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.chartMarker {
+  position: absolute;
+  z-index: 2;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgb(var(--module-hot-rgb));
+  box-shadow:
+    0 0 0 2px rgb(2 8 10 / 0.9),
+    0 0 10px rgb(var(--module-rgb) / 0.7);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.chartTooltip {
+  position: absolute;
+  z-index: 3;
+  top: 2px;
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 4px 7px;
+  border: 1px solid rgb(var(--module-rgb) / 0.35);
+  border-radius: 2px;
+  background: rgb(2 8 10 / 0.95);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.chartTooltip[data-align="start"] {
+  transform: translateX(0);
+}
+
+.chartTooltip[data-align="center"] {
+  transform: translateX(-50%);
+}
+
+.chartTooltip[data-align="end"] {
+  transform: translateX(-100%);
+}
+
+.chartTooltip strong {
+  color: var(--vitals-text);
+  font-family: var(--vitals-serif);
+  font-size: 11px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.chartTooltip span {
+  color: rgb(255 255 255 / 0.5);
+  font-family: var(--vitals-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+}
+
+.chartYLabels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.chartYLabels span {
+  position: absolute;
+  right: 3px;
+  padding: 0 3px;
+  border-radius: 2px;
+  background: rgb(3 6 8 / 0.72);
+  color: rgb(255 255 255 / 0.42);
+  font-family: var(--vitals-mono);
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.12em;
+  transform: translateY(-50%);
+}
+
+/* Anchor the extreme labels inside the plot so a short plot never stacks
+   them on top of each other; below two label heights only the peak stays. */
+.chartYLabels span:first-child {
+  transform: translateY(0);
+}
+
+.chartYLabels span:last-child {
+  transform: translateY(-100%);
+}
+
+@container (max-height: 30px) {
+  .chartYLabels span:last-child:not(:first-child) {
+    display: none;
+  }
+}
+
+.chartXLabels {
+  position: relative;
+  height: 12px;
+  pointer-events: none;
+}
+
+.chartXLabels span {
+  position: absolute;
+  top: 0;
+  color: rgb(255 255 255 / 0.35);
+  font-family: var(--vitals-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+.chartXLabels span:first-child {
+  transform: translateX(0);
+}
+
+.chartXLabels span:last-child {
+  transform: translateX(-100%);
+}
+
+.chartEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  border: 1px dashed rgb(var(--module-rgb) / 0.25);
+  color: rgb(255 255 255 / 0.42);
+  font-family: var(--vitals-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+@media (min-width: 1221px) and (min-height: 680px) and (max-height: 960px) {
+  .controlButton {
+    padding: 2px 4px;
+    letter-spacing: 0.08em;
+  }
+
+  .chartLayer {
+    gap: 2px;
+  }
+}
+
+@media (max-width: 620px) {
+  .module[data-mode="chart"] {
+    min-height: 340px;
+  }
+}

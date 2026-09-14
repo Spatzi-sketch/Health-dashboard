@@ -1,0 +1,510 @@
+/*
+ * RETENTION THEATRE — hub styles ported from the design lab
+ * (src/app/design-lab/retention-theatre.module.css).
+ *
+ * Foundation tokens only; no color literal ever appears here. The retention
+ * curve is a lit vein: hairline base, mint stroke with a restrained glow,
+ * drawn once on arrival (600ms, house ease) and then still. Exit density
+ * borrows the heatmap cell idiom; the flow band is layered mint at falling
+ * alpha, and an unmeasured stage renders a dashed gap instead of a bar. The
+ * lab's speed/glow multipliers stay in the lab; the app's global
+ * reduced-motion clamp covers the one animation in this module.
+ */
+
+.theatre {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  container-type: inline-size;
+}
+
+/* -- section head -------------------------------------------------------------- */
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--vitals-line-soft);
+}
+
+.headTitle {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+}
+
+.headTitle h3 {
+  margin: 0;
+  font: 500 10px/1 var(--vitals-mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--vitals-text);
+}
+
+.headTitle p {
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font: 400 8px/1 var(--vitals-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--vitals-text-faint);
+}
+
+.headStats {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: none;
+}
+
+.headStat {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  font: 400 8px/1 var(--vitals-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vitals-text-faint);
+}
+
+.headStat b {
+  font-weight: 500;
+  color: var(--vitals-mint);
+  font-variant-numeric: tabular-nums;
+}
+
+.headStat small {
+  font: 400 7px/1 var(--vitals-mono);
+  letter-spacing: 0.1em;
+  color: var(--vitals-text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* -- panel shell ----------------------------------------------------------------- */
+
+.panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px 12px;
+  border: 1px solid var(--vitals-line-soft);
+  background:
+    linear-gradient(
+      color-mix(in srgb, var(--vitals-mint) 2%, transparent) 1px,
+      transparent 1px
+    ) 0 0 / 100% 26px,
+    var(--vitals-bg);
+}
+
+.panelCorner {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  border-color: color-mix(in srgb, var(--vitals-mint) 30%, transparent);
+  border-style: solid;
+  pointer-events: none;
+}
+
+.panelCorner[data-corner="top-left"] { top: 5px; left: 5px; border-width: 1px 0 0 1px; }
+.panelCorner[data-corner="top-right"] { top: 5px; right: 5px; border-width: 1px 1px 0 0; }
+.panelCorner[data-corner="bottom-left"] { bottom: 5px; left: 5px; border-width: 0 0 1px 1px; }
+.panelCorner[data-corner="bottom-right"] { right: 5px; bottom: 5px; border-width: 0 1px 1px 0; }
+
+.panelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--vitals-line-soft);
+}
+
+.panelTitle {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font: 500 9px/1 var(--vitals-mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--vitals-mint) 55%, var(--vitals-text-dim));
+}
+
+/* The honest source chip: dim for the labeled fixture, mint for the store. */
+.sourceChip {
+  flex: none;
+  padding: 3px 6px;
+  border: 1px solid var(--vitals-line-soft);
+  border-radius: var(--radius-control);
+  font: 500 6.5px/1 var(--vitals-mono);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--vitals-text-faint);
+}
+
+.sourceChip[data-source="live"] {
+  border-color: color-mix(in srgb, var(--vitals-mint) 40%, transparent);
+  color: var(--vitals-mint);
+}
+
+/* One-line insight caption — the point of each instrument. */
+.insight {
+  margin: 0;
+  padding-top: 8px;
+  border-top: 1px dashed var(--vitals-line-soft);
+  font: 400 10.5px/1.5 var(--vitals-body);
+  color: var(--vitals-text-dim);
+}
+
+/* The fixture-video framing shown while the headline reads the live store. */
+.fixtureContext {
+  font: 400 7px/1.4 var(--vitals-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--vitals-text-faint);
+}
+
+/* -- the lit vein ------------------------------------------------------------------ */
+
+.curveWrap {
+  position: relative;
+}
+
+.curve {
+  display: block;
+  width: 100%;
+  height: 170px;
+}
+
+.curveGrid line {
+  stroke: var(--vitals-line-soft);
+  stroke-width: 1;
+  stroke-dasharray: 2 5;
+  vector-effect: non-scaling-stroke;
+}
+
+.curveArea {
+  fill: color-mix(in srgb, var(--vitals-mint) 6%, transparent);
+  stroke: none;
+}
+
+.curveVein {
+  fill: none;
+  stroke: var(--vitals-mint);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(
+    0 0 4px
+    color-mix(in srgb, var(--vitals-mint) 60%, transparent)
+  );
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: retentionDraw 600ms var(--vitals-ease) both;
+}
+
+@keyframes retentionDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+.cliffLine {
+  stroke: color-mix(in srgb, var(--negative) 70%, transparent);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  vector-effect: non-scaling-stroke;
+}
+
+.scrubLine {
+  stroke: color-mix(in srgb, var(--vitals-text) 30%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.scrubDot {
+  fill: var(--vitals-mint);
+  stroke: var(--vitals-bg);
+  stroke-width: 1;
+  filter: drop-shadow(
+    0 0 5px
+    color-mix(in srgb, var(--vitals-mint) 70%, transparent)
+  );
+}
+
+/* Bracketed cliff annotation, anchored to the marker. */
+.cliffTag {
+  position: absolute;
+  top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 6px 9px 5px;
+  margin-left: 8px;
+  border: 1px solid color-mix(in srgb, var(--negative) 34%, transparent);
+  background: color-mix(in srgb, var(--negative) 4%, var(--vitals-bg));
+}
+
+.cliffTag b {
+  font: 600 7px/1 var(--vitals-mono);
+  letter-spacing: 0.2em;
+  color: var(--negative);
+}
+
+.cliffTag span {
+  font: 400 8px/1 var(--vitals-mono);
+  letter-spacing: 0.1em;
+  color: var(--vitals-text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.tagCorner {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-style: solid;
+  border-color: color-mix(in srgb, var(--negative) 60%, transparent);
+  pointer-events: none;
+}
+
+.tagCorner[data-corner="top-left"] { top: 1px; left: 1px; border-width: 1px 0 0 1px; }
+.tagCorner[data-corner="top-right"] { top: 1px; right: 1px; border-width: 1px 1px 0 0; }
+.tagCorner[data-corner="bottom-left"] { bottom: 1px; left: 1px; border-width: 0 0 1px 1px; }
+.tagCorner[data-corner="bottom-right"] { right: 1px; bottom: 1px; border-width: 0 1px 1px 0; }
+
+/* Scrub rail. */
+.scrubRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.scrubInput {
+  flex: 1;
+  min-width: 0;
+  height: 14px;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.scrubInput::-webkit-slider-runnable-track {
+  height: 2px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--vitals-text) 14%, transparent) 0 1px,
+      transparent 1px 7px
+    ),
+    color-mix(in srgb, var(--vitals-text) 4%, transparent);
+}
+
+.scrubInput::-webkit-slider-thumb {
+  appearance: none;
+  width: 3px;
+  height: 12px;
+  margin-top: -5px;
+  border-radius: 1px;
+  background: var(--vitals-mint);
+  box-shadow: 0 0 7px
+    color-mix(in srgb, var(--vitals-mint) 65%, transparent);
+}
+
+.scrubInput::-moz-range-track {
+  height: 2px;
+  background: color-mix(in srgb, var(--vitals-text) 10%, transparent);
+}
+
+.scrubInput::-moz-range-thumb {
+  width: 3px;
+  height: 12px;
+  border: 0;
+  border-radius: 1px;
+  background: var(--vitals-mint);
+}
+
+.scrubReadout {
+  flex: none;
+  min-width: 168px;
+  text-align: right;
+  font: 500 8px/1 var(--vitals-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--vitals-mint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* -- where they left ------------------------------------------------------------- */
+
+.exitStrip {
+  display: grid;
+  grid-template-columns: repeat(26, 1fr);
+  gap: 2px;
+  height: 30px;
+}
+
+.exitCell {
+  border-radius: 1px;
+  background: color-mix(
+    in srgb,
+    var(--negative) calc(9% + var(--exit-level, 0) * 16%),
+    color-mix(in srgb, var(--vitals-text) 4%, transparent)
+  );
+}
+
+.exitCell[data-level="0"] { --exit-level: 0; }
+.exitCell[data-level="1"] { --exit-level: 1; }
+.exitCell[data-level="2"] { --exit-level: 2; }
+.exitCell[data-level="3"] { --exit-level: 3; }
+.exitCell[data-level="4"] { --exit-level: 4; }
+
+.exitCell[data-level="4"] {
+  box-shadow: 0 0 8px
+    color-mix(in srgb, var(--negative) 40%, transparent);
+}
+
+.beatRail {
+  position: relative;
+  height: 22px;
+}
+
+.beat {
+  position: absolute;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transform: none;
+  font: 500 6.5px/1 var(--vitals-mono);
+  letter-spacing: 0.16em;
+  color: var(--vitals-text-faint);
+  white-space: nowrap;
+}
+
+.beat i {
+  width: 1px;
+  height: 8px;
+  background: color-mix(in srgb, var(--vitals-text) 30%, transparent);
+}
+
+.exitScale {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font: 400 7px/1 var(--vitals-mono);
+  letter-spacing: 0.16em;
+  color: var(--vitals-text-faint);
+}
+
+/* -- subscriber flow --------------------------------------------------------------- */
+
+.flow {
+  display: block;
+  width: 100%;
+  height: 132px;
+}
+
+.flowBand {
+  fill: var(--vitals-mint);
+  stroke: none;
+}
+
+.flowBar {
+  fill: color-mix(in srgb, var(--vitals-mint) 80%, transparent);
+  filter: drop-shadow(
+    0 0 3px
+    color-mix(in srgb, var(--vitals-mint) 45%, transparent)
+  );
+}
+
+/* An unmeasured stage: a dashed hairline where its bar would stand. */
+.flowGap {
+  stroke: color-mix(in srgb, var(--vitals-text) 22%, transparent);
+  stroke-width: 1;
+  stroke-dasharray: 3 5;
+  vector-effect: non-scaling-stroke;
+}
+
+.flowLabels {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.flowLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.flowLabel:not(:first-child) {
+  text-align: center;
+}
+
+.flowLabel:last-child {
+  text-align: right;
+}
+
+.flowLabel span {
+  font: 500 6.5px/1 var(--vitals-mono);
+  letter-spacing: 0.18em;
+  color: var(--vitals-text-faint);
+}
+
+.flowLabel b {
+  font: 300 17px/1 var(--vitals-serif);
+  color: var(--vitals-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.flowLabel[data-state="awaiting"] b {
+  color: var(--vitals-text-faint);
+}
+
+.flowLabel small {
+  font: 400 6.5px/1.5 var(--vitals-mono);
+  letter-spacing: 0.08em;
+  color: var(--vitals-text-faint);
+}
+
+/* -- the honest footer --------------------------------------------------------------- */
+
+.foot {
+  padding-top: 8px;
+  border-top: 1px solid var(--vitals-line-soft);
+}
+
+.foot p {
+  margin: 0;
+  font: 400 8px/1.5 var(--vitals-mono);
+  letter-spacing: 0.14em;
+  color: var(--vitals-text-faint);
+}
+
+/* -- responsive ------------------------------------------------------------------------ */
+
+@container (max-width: 640px) {
+  .head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .scrubReadout {
+    min-width: 0;
+  }
+
+  .flowLabels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cliffTag {
+    display: none;
+  }
+}
